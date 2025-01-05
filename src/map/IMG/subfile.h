@@ -5,8 +5,7 @@
 #include <QFile>
 #include "imgdata.h"
 
-
-#define BLOCK_BITS 12 /* 4096 bytes */
+#define BLOCK_BITS 9 /* 512 bytes */
 
 namespace IMG {
 
@@ -27,8 +26,8 @@ public:
 			if (!_file) {
 				_file = new QFile(subFile->fileName());
 				if (!_file->open(QIODevice::ReadOnly | QIODevice::Unbuffered))
-					qWarning("%s: %s", qPrintable(_file->fileName()),
-					  qPrintable(_file->errorString()));
+					qWarning("%s: %s", qUtf8Printable(_file->fileName()),
+					  qUtf8Printable(_file->errorString()));
 				_delete = true;
 			}
 			_data.resize(subFile->blockSize());
