@@ -34,6 +34,23 @@ public:
 	void render();
 
 private:
+	struct SectorLight
+	{
+		SectorLight(const Coordinates &pos, Style::Color color, uint visibility,
+		  double range, double start, double end) : pos(pos), color(color),
+		  visibility(visibility), range(range), start(start), end(end) {}
+
+		Coordinates pos;
+		Style::Color color;
+		uint visibility;
+		double range;
+		double start;
+		double end;
+	};
+
+	typedef QMap<Coordinates, Style::Color> LightMap;
+	typedef QSet<Coordinates> SignalSet;
+
 	void fetchData(QList<MapData::Poly> &polygons, QList<MapData::Line> &lines,
 	  QList<MapData::Point> &points);
 	QPointF ll2xy(const Coordinates &c) const
@@ -44,15 +61,15 @@ private:
 	QPolygonF tsslptArrow(const QPointF &p, qreal angle) const;
 	QPointF centroid(const QVector<Coordinates> &polygon) const;
 	void processPoints(QList<MapData::Point> &points,
-	  QList<TextItem*> &textItems, QList<TextItem *> &lights);
+	  QList<TextItem*> &textItems, QList<TextItem *> &lights,
+	  QList<SectorLight> &sectorLights);
 	void processLines(const QList<MapData::Line> &lines,
 	  QList<TextItem*> &textItems);
-	void drawBitmapPath(QPainter *painter, const QImage &img,
-	  const Polygon &polygon);
-	void drawArrows(QPainter *painter, const QList<MapData::Point> &points);
-	void drawPolygons(QPainter *painter, const QList<MapData::Poly> &polygons);
-	void drawLines(QPainter *painter, const QList<MapData::Line> &lines);
-	void drawTextItems(QPainter *painter, const QList<TextItem*> &textItems);
+	void drawArrows(QPainter *painter, const QList<MapData::Point> &points) const;
+	void drawPolygons(QPainter *painter, const QList<MapData::Poly> &polygons) const;
+	void drawLines(QPainter *painter, const QList<MapData::Line> &lines) const;
+	void drawTextItems(QPainter *painter, const QList<TextItem*> &textItems) const;
+	void drawSectorLights(QPainter *painter, const QList<SectorLight> &lights) const;
 
 	static bool polyCb(MapData *data, void *context);
 	static bool pointCb(MapData *data, void *context);

@@ -5,6 +5,7 @@
 #include "map/textpointitem.h"
 #include "map/rectd.h"
 #include "objects.h"
+#include "attributes.h"
 #include "style.h"
 #include "rastertile.h"
 
@@ -12,8 +13,7 @@ using namespace ENC;
 
 #define TEXT_EXTENT 160
 #define TSSLPT_SIZE 24
-
-typedef QSet<Coordinates> PointSet;
+#define RANGE_FACTOR 4
 
 static const float C1 = 0.866025f; /* sqrt(3)/2 */
 static const QColor tsslptPen = QColor(0xeb, 0x49, 0xeb);
@@ -138,21 +138,21 @@ static void drawArrow(QPainter *painter, const QPolygonF &polygon, uint type)
 }
 
 void RasterTile::drawArrows(QPainter *painter,
-  const QList<MapData::Point> &points)
+  const QList<MapData::Point> &points) const
 {
 	for (int i = 0; i < points.size(); i++) {
 		const MapData::Point &point = points.at(i);
 
 		if (point.type()>>16 == TSSLPT || point.type()>>16 == RCTLPT) {
 			QPolygonF polygon(tsslptArrow(ll2xy(point.pos()),
-			  deg2rad(point.param().toDouble())));
+			  deg2rad(point.attributes().value(ORIENT).toDouble())));
 			drawArrow(painter, polygon, point.type());
 		}
 	}
 }
 
 void RasterTile::drawPolygons(QPainter *painter,
-  const QList<MapData::Poly> &polygons)
+  const QList<MapData::Poly> &polygons) const
 {
 	for (int n = 0; n < _style->drawOrder().size(); n++) {
 		for (int i = 0; i < polygons.size(); i++) {
@@ -184,7 +184,7 @@ void RasterTile::drawPolygons(QPainter *painter,
 	}
 }
 
-void RasterTile::drawLines(QPainter *painter, const QList<MapData::Line> &lines)
+void RasterTile::drawLines(QPainter *painter, const QList<MapData::Line> &lines) const
 {
 	painter->setBrush(Qt::NoBrush);
 
@@ -202,7 +202,7 @@ void RasterTile::drawLines(QPainter *painter, const QList<MapData::Line> &lines)
 }
 
 void RasterTile::drawTextItems(QPainter *painter,
-  const QList<TextItem*> &textItems)
+  const QList<TextItem*> &textItems) const
 {
 	QRectF rect(_rect);
 
@@ -213,10 +213,56 @@ void RasterTile::drawTextItems(QPainter *painter,
 	}
 }
 
-void RasterTile::processPoints(QList<MapData::Point> &points,
-  QList<TextItem*> &textItems, QList<TextItem*> &lights)
+static QRectF lightRect(const QPointF &pos, double range)
 {
-	PointSet lightsSet, signalsSet;
+	return QRectF(pos.x() - range * RANGE_FACTOR, pos.y() - range * RANGE_FACTOR,
+		  2*range * RANGE_FACTOR, 2*range * RANGE_FACTOR);
+}
+
+void RasterTile::drawSectorLights(QPainter *painter,
+  const QList<SectorLight> &lights) const
+{
+	for (int i = 0; i < lights.size(); i++) {
+		const SectorLight &l = lights.at(i);
+		QPointF pos(ll2xy(l.pos));
+		QRectF rect(lightRect(pos, (l.range == 0) ? 6 : l.range));
+		double a1 = -(l.end + 90);
+		double a2 = -(l.start + 90);
+		if (a1 > a2)
+			a2 += 360;
+		double as = (a2 - a1);
+		if (as == 0)
+			as = 360;
+
+		if (l.visibility == 3 || l.visibility >= 6)
+			painter->setPen(QPen(Qt::black, 1, Qt::DashLine));
+		else {
+			painter->setPen(QPen(Qt::black, 6,  Qt::SolidLine, Qt::FlatCap));
+			painter->drawArc(rect, a1 * 16, as * 16);
+			painter->setPen(QPen(Style::color(l.color), 4,  Qt::SolidLine,
+			  Qt::FlatCap));
+		}
+
+		painter->drawArc(rect, a1 * 16, as * 16);
+
+		if (a2 - a1 != 0) {
+			QLineF ln(pos, QPointF(pos.x() + rect.width(), pos.y()));
+			ln.setAngle(a1);
+			painter->setPen(QPen(Qt::black, 1, Qt::DashLine));
+			painter->drawLine(ln);
+			ln.setAngle(a2);
+			painter->drawLine(ln);
+		}
+	}
+}
+
+void RasterTile::processPoints(QList<MapData::Point> &points,
+  QList<TextItem*> &textItems, QList<TextItem*> &lights,
+  QList<SectorLight> &sectorLights)
+{
+	LightMap lightsMap;
+	SignalSet signalsSet;
+	QSet<Coordinates> slMap;
 	int i;
 
 	std::sort(points.begin(), points.end());
@@ -224,9 +270,22 @@ void RasterTile::processPoints(QList<MapData::Point> &points,
 	/* Lights & Signals */
 	for (i = 0; i < points.size(); i++) {
 		const MapData::Point &point = points.at(i);
-		if (point.type()>>16 == LIGHTS)
-			lightsSet.insert(point.pos());
-		else if (point.type()>>16 == FOGSIG)
+
+		if (point.type()>>16 == LIGHTS) {
+			const MapData::Attributes &attr = point.attributes();
+			Style::Color color = (Style::Color)(attr.value(COLOUR).toUInt());
+			double range = attr.value(VALNMR).toDouble();
+
+			if (attr.contains(SECTR1)
+			  || (range >= 6 && !(point.type() & 0xFFFF))) {
+				sectorLights.append(SectorLight(point.pos(), color,
+				  attr.value(LITVIS).toUInt(), range,
+				  attr.value(SECTR1).toDouble(), attr.value(SECTR2).toDouble()));
+				slMap.insert(point.pos());
+				qDebug() << attr;
+			} else
+				lightsMap.insert(point.pos(), color);
+		} else if (point.type()>>16 == FOGSIG)
 			signalsSet.insert(point.pos());
 		else
 			break;
@@ -245,7 +304,7 @@ void RasterTile::processPoints(QList<MapData::Point> &points,
 		const QColor *color = &style.textColor();
 		const QColor *hColor = style.haloColor().isValid()
 		  ? &style.haloColor() : 0;
-		double rotate = angle(point.type(), point.param());
+		double rotate = angle(point.type(), point.attributes().value(ORIENT));
 
 		if ((!label || !fnt) && !img)
 			continue;
@@ -254,11 +313,12 @@ void RasterTile::processPoints(QList<MapData::Point> &points,
 
 		TextPointItem *item = new TextPointItem(pos + offset, label, fnt, img,
 		  color, hColor, 0, 2, rotate);
-		if (item->isValid() && !item->collides(textItems)) {
+		if (item->isValid() && (slMap.contains(point.pos())
+		  || !item->collides(textItems))) {
 			textItems.append(item);
-			if (lightsSet.contains(point.pos()))
+			if (lightsMap.contains(point.pos()))
 				lights.append(new TextPointItem(pos + _style->lightOffset(),
-				  0, 0, _style->light(), 0, 0, 0, 0));
+				  0, 0, _style->light(lightsMap.value(point.pos())), 0, 0, 0, 0));
 			if (signalsSet.contains(point.pos()))
 				lights.append(new TextPointItem(pos + _style->signalOffset(),
 				  0, 0, _style->signal(), 0, 0, 0, 0));
@@ -326,13 +386,14 @@ void RasterTile::render()
 	QList<MapData::Poly> polygons;
 	QList<MapData::Point> points;
 	QList<TextItem*> textItems, lights;
+	QList<SectorLight> sectorLights;
 
 	img.setDevicePixelRatio(_ratio);
 	img.fill(Qt::transparent);
 
 	fetchData(polygons, lines, points);
 
-	processPoints(points, textItems, lights);
+	processPoints(points, textItems, lights, sectorLights);
 	processLines(lines, textItems);
 
 	QPainter painter(&img);
@@ -344,7 +405,9 @@ void RasterTile::render()
 	drawLines(&painter, lines);
 	drawArrows(&painter, points);
 
+
 	drawTextItems(&painter, lights);
+	drawSectorLights(&painter, sectorLights);
 	drawTextItems(&painter, textItems);
 
 	qDeleteAll(textItems);
