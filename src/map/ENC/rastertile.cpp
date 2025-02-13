@@ -277,7 +277,7 @@ void RasterTile::processPoints(QList<MapData::Point> &points,
 			double range = attr.value(VALNMR).toDouble();
 
 			if (attr.contains(SECTR1)
-			  || (range >= 6 && !(point.type() & 0xFFFF))) {
+			  || (range > 6 && !(point.type() & 0xFFFF))) {
 				sectorLights.append(SectorLight(point.pos(), color,
 				  attr.value(LITVIS).toUInt(), range,
 				  attr.value(SECTR1).toDouble(), attr.value(SECTR2).toDouble()));
@@ -313,7 +313,7 @@ void RasterTile::processPoints(QList<MapData::Point> &points,
 		TextPointItem *item = new TextPointItem(pos + offset, label, fnt, img,
 		  color, hColor, 0, 2, rotate);
 		if (item->isValid() && (slMap.contains(point.pos())
-		  || !item->collides(textItems))) {
+		  || (point.polygon() && img) || !item->collides(textItems))) {
 			textItems.append(item);
 			if (lightsMap.contains(point.pos()))
 				lights.append(new TextPointItem(pos + _style->lightOffset(),
