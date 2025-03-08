@@ -362,6 +362,8 @@ MapData::Point::Point(uint type, const Coordinates &c, const Attributes &attr,
 		subtype = CATACH;
 	else if (type == I_ACHARE)
 		subtype = I_CATACH;
+	else if (type == MARKUL)
+		subtype = CATMFA;
 
 	QList<QByteArray> list(_attr.value(subtype).split(','));
 	std::sort(list.begin(), list.end());
@@ -423,6 +425,8 @@ MapData::Poly::Poly(uint type, const Polygon &path, const Attributes &attr,
 		subtype = CATMFA;
 	else if (type == I_BERTHS)
 		subtype = I_CATBRT;
+	else if (type == M_COVR)
+		subtype = CATCOV;
 
 	switch (type) {
 		case DEPARE:
@@ -864,7 +868,7 @@ MapData::~MapData()
 		delete _points.GetAt(pit);
 }
 
-void MapData::points(const RectC &rect, QList<Point> *points) const
+void MapData::points(const RectC &rect, QList<Point> *points)
 {
 	double min[2], max[2];
 
@@ -874,18 +878,12 @@ void MapData::points(const RectC &rect, QList<Point> *points) const
 	_lines.Search(min, max, linePointCb, points);
 }
 
-void MapData::lines(const RectC &rect, QList<Line> *lines) const
+void MapData::polys(const RectC &rect, QList<Poly> *polygons,
+  QList<Line> *lines)
 {
 	double min[2], max[2];
 
 	rectcBounds(rect, min, max);
 	_lines.Search(min, max, lineCb, lines);
-}
-
-void MapData::polygons(const RectC &rect, QList<Poly> *polygons) const
-{
-	double min[2], max[2];
-
-	rectcBounds(rect, min, max);
 	_areas.Search(min, max, polygonCb, polygons);
 }

@@ -27,7 +27,6 @@ static QFont pixelSizeFont(int pixelSize)
 
 void Style::polygonStyle()
 {
-	_polygons[TYPE(M_COVR)] = Polygon(QBrush(QColor(0xff, 0xff, 0xff)));
 	_polygons[TYPE(LNDARE)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64)));
 	_polygons[TYPE(BUAARE)] = Polygon(QBrush(QColor(0xd9, 0x8b, 0x21)));
 	_polygons[TYPE(BUISGL)] = Polygon(QBrush(QColor(0xd9, 0x8b, 0x21)),
@@ -141,6 +140,7 @@ void Style::polygonStyle()
 	  1.5, Qt::DashLine));
 	_polygons[TYPE(CBLARE)] = Polygon(QImage(":/marine/cable-area-line.png"));
 	_polygons[TYPE(PIPARE)] = Polygon(QImage(":/marine/pipeline-area-line.png"));
+	_polygons[SUBTYPE(MARKUL, 0)] = Polygon(QImage(":/marine/fishing-farm-line.png"));
 	_polygons[SUBTYPE(MARKUL, 3)] = Polygon(QImage(":/marine/fishing-farm-line.png"));
 	_polygons[TYPE(BERTHS)] = Polygon(Qt::NoBrush, QPen(QColor(0xeb, 0x49, 0xeb),
 	  1, Qt::DashLine));
@@ -152,19 +152,19 @@ void Style::polygonStyle()
 	  1, Qt::DashDotLine));
 
 	_drawOrder
-	  << TYPE(M_COVR) << TYPE(LNDARE) << SUBTYPE(DEPARE, 0)
-	  << SUBTYPE(DEPARE, 1) << SUBTYPE(DEPARE, 2) << SUBTYPE(DEPARE, 3)
-	  << TYPE(UNSARE) << SUBTYPE(DEPARE, 4) << SUBTYPE(DEPARE, 5)
-	  << SUBTYPE(DEPARE, 6) << TYPE(LAKARE) << TYPE(CANALS) << TYPE(DYKCON)
-	  << TYPE(RIVERS) << TYPE(DRGARE) << TYPE(FAIRWY) << TYPE(LOKBSN)
-	  << TYPE(I_LOKBSN) << TYPE(BUAARE) << TYPE(BUISGL) << TYPE(SILTNK)
-	  << TYPE(AIRARE) << TYPE(BRIDGE) << TYPE(I_BRIDGE) << TYPE(TUNNEL)
-	  << TYPE(I_TERMNL) << TYPE(SLCONS) << TYPE(I_SLCONS) << TYPE(PONTON)
-	  << TYPE(I_PONTON) << TYPE(HULKES) << TYPE(I_HULKES) << TYPE(FLODOC)
-	  << TYPE(I_FLODOC) << TYPE(DRYDOC) << TYPE(DAMCON) << TYPE(PYLONS)
-	  << TYPE(MORFAC) << TYPE(GATCON) << TYPE(I_GATCON) << TYPE(BERTHS)
-	  << TYPE(I_BERTHS) << SUBTYPE(I_BERTHS, 6) << TYPE(DMPGRD) << TYPE(TSEZNE)
-	  << TYPE(OBSTRN) << TYPE(UWTROC) << TYPE(DWRTPT) << SUBTYPE(ACHARE, 1)
+	  << TYPE(LNDARE) << SUBTYPE(DEPARE, 0) << SUBTYPE(DEPARE, 1)
+	  << SUBTYPE(DEPARE, 2) << SUBTYPE(DEPARE, 3) << TYPE(UNSARE)
+	  << SUBTYPE(DEPARE, 4) << SUBTYPE(DEPARE, 5) << SUBTYPE(DEPARE, 6)
+	  << TYPE(LAKARE) << TYPE(CANALS) << TYPE(DYKCON) << TYPE(RIVERS)
+	  << TYPE(DRGARE) << TYPE(FAIRWY) << TYPE(LOKBSN) << TYPE(I_LOKBSN)
+	  << TYPE(BUAARE) << TYPE(BUISGL) << TYPE(SILTNK) << TYPE(AIRARE)
+	  << TYPE(BRIDGE) << TYPE(I_BRIDGE) << TYPE(TUNNEL) << TYPE(I_TERMNL)
+	  << TYPE(SLCONS) << TYPE(I_SLCONS) << TYPE(PONTON) << TYPE(I_PONTON)
+	  << TYPE(HULKES) << TYPE(I_HULKES) << TYPE(FLODOC) << TYPE(I_FLODOC)
+	  << TYPE(DRYDOC) << TYPE(DAMCON) << TYPE(PYLONS) << TYPE(MORFAC)
+	  << TYPE(GATCON) << TYPE(I_GATCON) << TYPE(BERTHS) << TYPE(I_BERTHS)
+	  << SUBTYPE(I_BERTHS, 6) << TYPE(DMPGRD) << TYPE(TSEZNE) << TYPE(OBSTRN)
+	  << TYPE(UWTROC) << TYPE(DWRTPT) << SUBTYPE(ACHARE, 1)
 	  << SUBTYPE(ACHARE, 2) << SUBTYPE(ACHARE, 3) << SUBTYPE(ACHARE, 4)
 	  << SUBTYPE(ACHARE, 5) << SUBTYPE(ACHARE, 6) << SUBTYPE(ACHARE, 7)
 	  << SUBTYPE(ACHARE, 8) << SUBTYPE(ACHARE, 9) << SUBTYPE(I_ACHARE, 1)
@@ -180,7 +180,8 @@ void Style::polygonStyle()
 	  << SUBTYPE(RESARE, 17) << SUBTYPE(I_RESARE, 17) << SUBTYPE(RESARE, 22)
 	  << SUBTYPE(I_RESARE, 22) << SUBTYPE(RESARE, 23) << SUBTYPE(I_RESARE, 23)
 	  << SUBTYPE(RESARE, 1) << TYPE(CBLARE) << TYPE(PIPARE) << TYPE(PRCARE)
-	  << TYPE(I_TRNBSN) << SUBTYPE(MARKUL, 3) << TYPE(CONZNE);
+	  << TYPE(I_TRNBSN) << SUBTYPE(MARKUL, 0) << SUBTYPE(MARKUL, 3)
+	  << TYPE(CONZNE);
 }
 
 void Style::lineStyle(qreal ratio)
@@ -393,6 +394,8 @@ void Style::pointStyle(qreal ratio)
 	_points[TYPE(LNDARE)].setHaloColor(QColor());
 	_points[TYPE(LNDRGN)].setHaloColor(QColor());
 	_points[TYPE(RADRFL)] = Point(QImage(":/marine/radar-reflector.png"));
+	_points[SUBTYPE(MARKUL, 0)] = Point(QImage(":/marine/fishing-farm.png"));
+	_points[SUBTYPE(MARKUL, 3)] = Point(QImage(":/marine/fishing-farm.png"));
 
 	_points[SUBTYPE(I_BERTHS, 6)] = Point(QImage(":/marine/fleeting-area.png"),
 	  Small);
@@ -482,6 +485,7 @@ Style::Style(qreal ratio)
 	_lightRed = QImage(":/marine/light-red.png");
 	_lightGreen = QImage(":/marine/light-green.png");
 	_lightYellow = QImage(":/marine/light-yellow.png");
+	_lightWhite = QImage(":/marine/light-white.png");
 	_lightOffset = QPoint(11, 11);
 	_signal = QImage(":/marine/fog-signal.png");
 	_signalOffset = QPoint(-9, 9);
@@ -541,6 +545,7 @@ const QImage *Style::light(Color color) const
 		case Green:
 			return &_lightGreen;
 		case White:
+			return &_lightWhite;
 		case Yellow:
 		case Amber:
 		case Orange:
@@ -558,6 +563,7 @@ QColor Style::color(Style::Color c)
 		case Green:
 			return Qt::green;
 		case White:
+			return Qt::white;
 		case Yellow:
 		case Amber:
 		case Orange:

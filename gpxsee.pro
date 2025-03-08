@@ -3,7 +3,7 @@ unix:!macx:!android {
 } else {
     TARGET = GPXSee
 }
-VERSION = 13.36
+VERSION = 13.37
 
 QT += core \
     gui \
@@ -117,6 +117,8 @@ HEADERS += src/common/config.h \
     src/data/gpsdumpparser.h \
     src/data/style.h \
     src/data/twonavparser.h \
+    src/data/txtparser.h \
+    src/map/ENC/data.h \
     src/map/IMG/light.h \
     src/map/downloader.h \
     src/map/demloader.h \
@@ -343,6 +345,7 @@ SOURCES += src/main.cpp \
     src/GUI/pngexportdialog.cpp \
     src/GUI/projectioncombobox.cpp \
     src/GUI/passwordedit.cpp \
+    src/data/txtparser.cpp \
     src/map/downloader.cpp \
     src/map/demloader.cpp \
     src/map/ENC/atlasdata.cpp \
