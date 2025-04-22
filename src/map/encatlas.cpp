@@ -12,6 +12,8 @@ using namespace ENC;
 #define EPSILON   1e-6
 #define TILE_SIZE 512
 
+constexpr quint32 CATD = ISO8211::NAME("CATD");
+
 Range ENCAtlas::zooms(IntendedUsage usage)
 {
 	switch (usage) {
@@ -59,36 +61,27 @@ bool ENCAtlas::processRecord(const ISO8211::Record &record, QByteArray &file,
 	if (record.size() < 2)
 		return false;
 
-	const ENC::ISO8211::Field &f = record.at(1);
-	const QByteArray &ba = f.tag();
+	const ENC::ISO8211::Field &field = record.at(1);
 
-	if (ba == "CATD") {
-		QByteArray FILE, IMPL;
-
-		if (!f.subfield("IMPL", &IMPL))
+	if (field.tag() == CATD) {
+		if (field.data().at(0).size() < 10)
 			return false;
-		if (!f.subfield("FILE", &FILE))
-			return false;
+		QByteArray impl = field.data().at(0).at(5).toByteArray();
+		file = field.data().at(0).at(2).toByteArray();
 
-		if (IMPL == "BIN" && FILE.endsWith("000")) {
-			QByteArray SLAT, WLON, NLAT, ELON;
-
-			if (!f.subfield("SLAT", &SLAT))
-				return false;
-			if (!f.subfield("WLON", &WLON))
-				return false;
-			if (!f.subfield("NLAT", &NLAT))
-				return false;
-			if (!f.subfield("ELON", &ELON))
-				return false;
+		if (impl == "BIN" && file.endsWith("000")) {
+			QByteArray slat = field.data().at(0).at(6).toByteArray();
+			QByteArray wlon = field.data().at(0).at(7).toByteArray();
+			QByteArray nlat = field.data().at(0).at(8).toByteArray();
+			QByteArray elon = field.data().at(0).at(9).toByteArray();
 
 			bool ok1, ok2, ok3, ok4;
-			bounds = RectC(Coordinates(WLON.toDouble(&ok1), NLAT.toDouble(&ok2)),
-			  Coordinates(ELON.toDouble(&ok3), SLAT.toDouble(&ok4)));
+			bounds = RectC(Coordinates(wlon.toDouble(&ok1), nlat.toDouble(&ok2)),
+			  Coordinates(elon.toDouble(&ok3), slat.toDouble(&ok4)));
 			if (!(ok1 && ok2 && ok3 && ok4))
 				return false;
 
-			file = FILE.replace('\\', '/');
+			file.replace('\\', '/');
 
 			return true;
 		}

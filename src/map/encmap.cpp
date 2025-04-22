@@ -15,6 +15,12 @@ using namespace ENC;
 #define EPSILON   1e-6
 #define TILE_SIZE 512
 
+constexpr quint32 SG2D = ISO8211::NAME("SG2D");
+constexpr quint32 SG3D = ISO8211::NAME("SG3D");
+constexpr quint32 VRID = ISO8211::NAME("VRID");
+constexpr quint32 DSID = ISO8211::NAME("DSID");
+constexpr quint32 DSPM = ISO8211::NAME("DSPM");
+
 static Range zooms(const RectC &bounds)
 {
 	double size = qMin(bounds.width(), bounds.height());
@@ -57,9 +63,9 @@ static const ISO8211::Field *SGXD(const ISO8211::Record &r)
 {
 	const ISO8211::Field *f;
 
-	if ((f = ISO8211::field(r, "SG2D")))
+	if ((f = ISO8211::field(r, SG2D)))
 		return f;
-	else if ((f = ISO8211::field(r, "SG3D")))
+	else if ((f = ISO8211::field(r, SG3D)))
 		return f;
 	else
 		return 0;
@@ -97,23 +103,26 @@ bool ENCMap::bounds(const QVector<ISO8211::Record> &gv, Rect &b)
 }
 
 bool ENCMap::processRecord(const ISO8211::Record &record,
-  QVector<ISO8211::Record> &rv, uint &COMF, QString &name)
+  QVector<ISO8211::Record> &rv, uint &comf, QByteArray &dsnm)
 {
 	if (record.size() < 2)
 		return false;
 
 	const ISO8211::Field &f = record.at(1);
-	const QByteArray &ba = f.tag();
+	quint32 tag = f.tag();
 
-	if (ba == "VRID") {
+	if (tag == VRID) {
 		rv.append(record);
-	} else if (ba == "DSID") {
-		QByteArray DSNM;
-		if (!f.subfield("DSNM", &DSNM))
+	} else if (tag == DSID) {
+		if (f.data().at(0).size() < 5)
 			return false;
-		name = DSNM;
-	} else if (ba == "DSPM") {
-		if (!f.subfield("COMF", &COMF))
+		dsnm = f.data().at(0).at(4).toByteArray();
+	} else if (tag == DSPM) {
+		bool ok;
+		if (f.data().at(0).size() < 11)
+			return false;
+		comf = f.data().at(0).at(10).toUInt(&ok);
+		if (!ok)
 			return false;
 	}
 
@@ -127,14 +136,15 @@ ENCMap::ENCMap(const QString &fileName, QObject *parent)
 	QVector<ISO8211::Record> gv;
 	ISO8211 ddf(fileName);
 	ISO8211::Record record;
-	uint COMF = 1;
+	uint comf = 1;
+	QByteArray dsnm;
 
 	if (!ddf.readDDR()) {
 		_errorString = ddf.errorString();
 		return;
 	}
 	while (ddf.readRecord(record)) {
-		if (!processRecord(record, gv, COMF, _name)) {
+		if (!processRecord(record, gv, comf, dsnm)) {
 			_errorString = "Invalid S-57 record";
 			return;
 		}
@@ -144,13 +154,15 @@ ENCMap::ENCMap(const QString &fileName, QObject *parent)
 		return;
 	}
 
+	_name = dsnm;
+
 	Rect b;
 	if (!bounds(gv, b)) {
 		_errorString = "Error fetching geometries bounds";
 		return;
 	}
-	Coordinates tl(b.minX() / (double)COMF, b.maxY() / (double)COMF);
-	Coordinates br(b.maxX() / (double)COMF, b.minY() / (double)COMF);
+	Coordinates tl(b.minX() / (double)comf, b.maxY() / (double)comf);
+	Coordinates br(b.maxX() / (double)comf, b.minY() / (double)comf);
 	_llBounds = RectC(tl, br);
 	if (!_llBounds.isValid()) {
 		_errorString = "Invalid geometries bounds";
