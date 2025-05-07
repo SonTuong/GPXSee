@@ -33,6 +33,7 @@
 #define TRAFIC 172
 #define VALDCO 174
 #define VALNMR 178
+#define VALSOU 179
 #define VERCLR 181
 #define WATLEV 187
 
@@ -43,6 +44,7 @@
 #define I_RDOCAL 17017
 #define I_WTWDIS 17064
 #define I_CATBRT 17066
+#define I_CATBUN 17067
 #define I_HUNITS 17103
 
 #endif // ENC_ATTRIBUTES_H

@@ -120,6 +120,8 @@ bool RGNFile::readBuoyInfo(Handle &hdl, quint8 flags, quint32 size,
 	if (!(size >= 2 && readUInt16(hdl, val)))
 		return false;
 
+	point->flags = (val & 0x3f)<<24;
+
 	lc = (val >> 10) & 0x0f;
 	if (!lc)
 		lc = (val >> 6) & 7;
@@ -402,18 +404,20 @@ bool RGNFile::readLclLights(Handle &hdl, quint32 &size, quint32 lights,
 bool RGNFile::readLclNavaid(Handle &hdl, quint32 size,
   MapData::Point *point) const
 {
-	quint32 unused, flags;
+	quint32 unused, color, flags;
 
 	// Discard the class lights info if any (marine points may have both!)
 	point->lights.clear();
+	point->flags &= 0xffffff;
 
 	if (!(size >= 4 && readUInt32(hdl, flags)))
 		return false;
 	size -= 4;
 	if (flags & 1) {
-		if (!(size >= 1 && readUInt8(hdl, unused)))
+		if (!(size >= 1 && readUInt8(hdl, color)))
 			return false;
 		size--;
+		point->flags |= color<<24;
 	}
 	if (flags & 2) {
 		if (!(size >= 1 && readUInt8(hdl, unused)))

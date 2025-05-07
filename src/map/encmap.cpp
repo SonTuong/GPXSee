@@ -15,11 +15,11 @@ using namespace ENC;
 #define EPSILON   1e-6
 #define TILE_SIZE 512
 
-constexpr quint32 SG2D = ISO8211::NAME("SG2D");
-constexpr quint32 SG3D = ISO8211::NAME("SG3D");
-constexpr quint32 VRID = ISO8211::NAME("VRID");
-constexpr quint32 DSID = ISO8211::NAME("DSID");
-constexpr quint32 DSPM = ISO8211::NAME("DSPM");
+constexpr quint32 SG2D = ISO8211::TAG("SG2D");
+constexpr quint32 SG3D = ISO8211::TAG("SG3D");
+constexpr quint32 VRID = ISO8211::TAG("VRID");
+constexpr quint32 DSID = ISO8211::TAG("DSID");
+constexpr quint32 DSPM = ISO8211::TAG("DSPM");
 
 static Range zooms(const RectC &bounds)
 {
@@ -63,9 +63,9 @@ static const ISO8211::Field *SGXD(const ISO8211::Record &r)
 {
 	const ISO8211::Field *f;
 
-	if ((f = ISO8211::field(r, SG2D)))
+	if ((f = r.field(SG2D)))
 		return f;
-	else if ((f = ISO8211::field(r, SG3D)))
+	else if ((f = r.field(SG3D)))
 		return f;
 	else
 		return 0;
@@ -143,15 +143,15 @@ ENCMap::ENCMap(const QString &fileName, QObject *parent)
 		_errorString = ddf.errorString();
 		return;
 	}
-	while (ddf.readRecord(record)) {
+	while (!ddf.atEnd()) {
+		if (!ddf.readRecord(record)) {
+			_errorString = ddf.errorString();
+			return;
+		}
 		if (!processRecord(record, gv, comf, dsnm)) {
 			_errorString = "Invalid S-57 record";
 			return;
 		}
-	}
-	if (!ddf.errorString().isNull()) {
-		_errorString = ddf.errorString();
-		return;
 	}
 
 	_name = dsnm;

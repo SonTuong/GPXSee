@@ -12,7 +12,7 @@ using namespace ENC;
 #define EPSILON   1e-6
 #define TILE_SIZE 512
 
-constexpr quint32 CATD = ISO8211::NAME("CATD");
+constexpr quint32 CATD = ISO8211::TAG("CATD");
 
 Range ENCAtlas::zooms(IntendedUsage usage)
 {
@@ -127,13 +127,13 @@ ENCAtlas::ENCAtlas(const QString &fileName, QObject *parent)
 		_errorString = ddf.errorString();
 		return;
 	}
-	while (ddf.readRecord(record)) {
+	while (!ddf.atEnd()) {
+		if (!ddf.readRecord(record)) {
+			_errorString = ddf.errorString();
+			return;
+		}
 		if (processRecord(record, file, bounds))
 			addMap(dir, file, bounds);
-	}
-	if (!ddf.errorString().isNull()) {
-		_errorString = ddf.errorString();
-		return;
 	}
 
 	if (_data.isEmpty()) {

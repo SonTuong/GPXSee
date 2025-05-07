@@ -44,6 +44,15 @@ ISO8211::SubFieldDefinition ISO8211::fieldType(const QString &str, int cnt)
 		return SubFieldDefinition();
 }
 
+const ISO8211::Field *ISO8211::Record::field(quint32 name) const
+{
+	for (int i = 0; i < size(); i++)
+		if (at(i).tag() == name)
+			return &at(i);
+
+	return 0;
+}
+
 int ISO8211::readDR(QVector<FieldDefinition> &fields)
 {
 	DR ddr;
@@ -77,11 +86,13 @@ int ISO8211::readDR(QVector<FieldDefinition> &fields)
 			return -1;
 
 		r.tag = qFromLittleEndian<quint32>(tag);
-		r.pos = offset + Util::str2int(fieldPos.constData(), posSize);
+		r.pos = Util::str2int(fieldPos.constData(), posSize);
 		r.size = Util::str2int(fieldLen.constData(), lenSize);
 
 		if (r.pos < 0 || r.size < 0)
 			return -1;
+
+		r.pos += offset;
 	}
 
 	return len;
@@ -172,10 +183,8 @@ bool ISO8211::readDDR()
 	for (int i = 0; i < fields.size(); i++) {
 		SubFields def;
 		if (!readDDA(fields.at(i), def)) {
-			QByteArray tag(sizeof(quint32), Qt::Initialization::Uninitialized);
-			qToLittleEndian<quint32>(fields.at(i).tag, tag.data());
 			_errorString = QString("Error reading %1 DDA field")
-			  .arg(QString(tag));
+			  .arg(NAME(fields.at(i).tag));
 			return false;
 		}
 		_map.insert(fields.at(i).tag, def);
@@ -259,12 +268,8 @@ bool ISO8211::readUDA(quint64 pos, const FieldDefinition &def,
 
 bool ISO8211::readRecord(Record &record)
 {
-	if (_file.atEnd())
-		return false;
-
 	QVector<FieldDefinition> fields;
 	qint64 pos = _file.pos();
-
 
 	if (readDR(fields) < 0) {
 		_errorString = "Error reading DR";
@@ -279,16 +284,12 @@ bool ISO8211::readRecord(Record &record)
 
 		FieldsMap::const_iterator it(_map.find(def.tag));
 		if (it == _map.constEnd()) {
-			QByteArray tag(sizeof(quint32), Qt::Initialization::Uninitialized);
-			qToLittleEndian<quint32>(def.tag, tag.data());
-			_errorString = QString("%1: unknown record").arg(QString(tag));
+			_errorString = QString("%1: unknown record").arg(NAME(def.tag));
 			return false;
 		}
 
 		if (!readUDA(pos, def, it->defs(), it->repeat(), data)) {
-			QByteArray tag(sizeof(quint32), Qt::Initialization::Uninitialized);
-			qToLittleEndian<quint32>(def.tag, tag.data());
-			_errorString = QString("Error reading %1 record").arg(QString(tag));
+			_errorString = QString("Error reading %1 record").arg(NAME(def.tag));
 			return false;
 		}
 
@@ -298,11 +299,9 @@ bool ISO8211::readRecord(Record &record)
 	return true;
 }
 
-const ISO8211::Field *ISO8211::field(const Record &record, quint32 name)
+QString ISO8211::NAME(quint32 tag)
 {
-	for (int i = 0; i < record.size(); i++)
-		if (record.at(i).tag() == name)
-			return &record.at(i);
-
-	return 0;
+	char buffer[sizeof(quint32)];
+	qToLittleEndian<quint32>(tag, buffer);
+	return QString::fromLatin1(buffer, sizeof(buffer));
 }
