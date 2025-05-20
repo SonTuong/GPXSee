@@ -142,6 +142,8 @@ public:
 	  {return (type >= 0x1400 && type <= 0x153f);}
 	static bool isState(quint32 type)
 	  {return (type == TYPE(0x1e));}
+	static bool isMarina(quint32 type)
+	  {return type == 0x10703;}
 	static bool isRaster(quint32 type)
 	  {return (type == 0x10613);}
 	static bool isDepthPoint(quint32 type)
@@ -152,12 +154,19 @@ public:
 	  {return (type >= 0x10200 && type < 0x10300);}
 	static bool isLight(quint32 type)
 	  {return (type >= 0x10100 && type < 0x10200);}
+	static bool isLabelPoint(quint32 type)
+	  {return type == 0x10500;}
 	static bool isMarinePoint(quint32 type)
 	  {return type >= 0x10100 && type < 0x10a00;}
-	static bool isMarina(quint32 type)
-	  {return type == 0x10703;}
+	static bool isStyledLine(quint32 type)
+	  {return type >= 0x10400 && type < 0x10700;}
+	static bool isCartographicLine(quint32 type)
+	  {return type == 0x10601;}
+	static bool isRecommendedRoute(quint32 type)
+	  {return type == 0x10108;}
+
 	static bool hasColorset(quint32 type)
-	  {return (isBuoy(type) && !(type == 0x1020d || type == 0x10216));}
+	  {return (isBuoy(type) && !(type == 0x1020d || type >= 0x10216));}
 
 	static QColor color(Light::Color c);
 

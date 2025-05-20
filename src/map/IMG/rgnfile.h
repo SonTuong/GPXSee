@@ -69,6 +69,10 @@ private:
 	  MapData::Point *point) const;
 	bool readLightInfo(Handle &hdl, quint8 flags, quint32 size,
 	  MapData::Point *point) const;
+	bool readLineStyle(Handle &hdl, quint8 flags, quint32 size,
+	  MapData::Poly *line) const;
+	bool readRecommendedRoute(Handle &hdl, quint8 flags, quint32 size,
+	  MapData::Poly *line) const;
 	bool readLabel(Handle &hdl, LBLFile *lbl, Handle &lblHdl,
 	  quint8 flags, quint32 size, MapData::Point *point) const;
 	bool readLclNavaid(Handle &hdl, quint32 size,

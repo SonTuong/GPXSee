@@ -29,18 +29,25 @@ class MapData
 {
 public:
 	struct Poly {
-		Poly() : oneway(false) {}
+		Poly() : flags(0) {}
+
+		enum Flags {
+			OneWay = 1,
+			Invert = 2,
+			Direction = 4,
+			Dashed = 8
+		};
 
 		/* QPointF insted of Coordinates for performance reasons (no need to
 		   duplicate all the vectors for drawing). Note, that we do not want to
 		   ll2xy() the points in the MapData class as this can not be done in
 		   parallel. */
 		QVector<QPointF> points;
+		RectC boundingRect;
 		Label label;
 		Raster raster;
 		quint32 type;
-		RectC boundingRect;
-		bool oneway;
+		quint32 flags;
 
 		bool operator<(const Poly &other) const
 		  {return type > other.type;}
@@ -50,7 +57,6 @@ public:
 		Point() : id(0), flags(0) {}
 
 		enum Flags {
-			NoFlag = 0,
 			ClassLabel = 1,
 		};
 

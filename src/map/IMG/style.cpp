@@ -7,8 +7,8 @@
 using namespace IMG;
 using namespace Util;
 
-#define PNT(type, color, img, dx, dy) \
-  _points[(type) | (color)<<24] = Point(QImage(img), QPoint(dx, dy));
+#define PNT(type, index, img, dx, dy) \
+	_points[(type) | (index)<<24] = Point(QImage(img), QPoint(dx, dy));
 
 #define COLORSET(type, name, dx, dy) \
 	PNT(type, 0, ":/marine/" name ".png", dx, dy); \
@@ -351,12 +351,12 @@ void Style::defaultPolygonStyle()
 	_polygons[0x10307] = Polygon(QBrush(QColor(0xff, 0xff, 0xff)));
 	_polygons[0x10308] = Polygon(QBrush(QColor(0xff, 0xff, 0xff)));
 	_polygons[0x10407] = Polygon(QBrush(QColor(0xa3, 0xa3, 0xa3),
-	  Qt::Dense3Pattern));
+	  Qt::Dense5Pattern));
+	_polygons[0x10408] = Polygon(QBrush(QColor(0xff, 0x40, 0x40),
+	  Qt::Dense5Pattern));
 	_polygons[0x10409] = Polygon(QBrush(QColor(0xff, 0x40, 0x40),
 	  Qt::FDiagPattern));
 	_polygons[0x10503] = Polygon(QBrush(QColor(0xff, 0x40, 0x40),
-	  Qt::FDiagPattern));
-	_polygons[0x10504] = Polygon(QBrush(QColor(0xff, 0x40, 0x40),
 	  Qt::FDiagPattern));
 	_polygons[0x10601] = Polygon(QBrush(QColor(0xaa, 0xaa, 0xaa)));
 	_polygons[0x1060a] = Polygon(QBrush(QColor(0xfc, 0xb4, 0xfc)));
@@ -366,7 +366,7 @@ void Style::defaultPolygonStyle()
 	_drawOrder
 	  << TYPE(0x4b) << 0x10d01 << 0x10106 << 0x10104 << TYPE(0x4a) << 0x10614
 	  << 0x10101 << 0x10102 << 0x10301 << 0x10302 << 0x10303 << 0x10304
-	  << 0x10305 << 0x10306 << 0x10307 << 0x10308 << 0x10601 << 0x10105
+	  << 0x10305 << 0x10306 << 0x10307 << 0x10308 << 0x10601
 	  << TYPE(0x01) << 0x10800 << TYPE(0x02) << 0x10801 << TYPE(0x03) << 0x10802
 	  << TYPE(0x17) << 0x10a04 << TYPE(0x18) << 0x1090c << TYPE(0x1a) << 0x1090e
 	  << TYPE(0x28) << 0x10b01 << TYPE(0x32) << 0x10b02 << TYPE(0x3c) << 0x10b03
@@ -381,10 +381,11 @@ void Style::defaultPolygonStyle()
 	  << TYPE(0x04) << 0x10901 << TYPE(0x05) << 0x10902 << TYPE(0x06) << 0x10903
 	  << TYPE(0x07) << 0x10904 << TYPE(0x08) << 0x10905 << TYPE(0x09) << 0x10906
 	  << TYPE(0x0a) << 0x10907 << TYPE(0x0b) << 0x10908 << TYPE(0x0c) << 0x10909
-	  << TYPE(0x26) << TYPE(0x0d) << 0x1090a << TYPE(0x0e) << 0x1090b << TYPE(0x0f)
-	  << TYPE(0x10) << TYPE(0x11) << TYPE(0x12) << TYPE(0x19) << 0x1090d
-	  << TYPE(0x13) << 0x10900 << 0x10613 << 0x10407 << 0x10409 << 0x10503
-	  << 0x10504 << 0x1060a;
+	  << TYPE(0x26) << TYPE(0x0d) << 0x1090a << TYPE(0x0e) << 0x1090b
+	  << TYPE(0x0f) << TYPE(0x10) << TYPE(0x11) << TYPE(0x12)
+	  << TYPE(0x19) << 0x1090d << TYPE(0x13) << 0x10900
+	  << 0x10613 /*raster*/ << 0x1060a << 0x10407 << 0x10408 << 0x10409
+	  << 0x10503 << 0x10105;
 }
 
 void Style::defaultLineStyle(qreal ratio)
@@ -489,28 +490,103 @@ void Style::defaultLineStyle(qreal ratio)
 	_lines[0x10106] = Line(QImage(":/marine/cable-line.png"));
 	_lines[0x10107] = Line(QPen(QColor(0xa5, 0x81, 0x40), 3, Qt::SolidLine));
 	_lines[0x10108] = Line(QPen(QColor(0, 0, 0), 1, Qt::SolidLine));
+	_lines[0x110108] = Line(QPen(QColor(0, 0, 0), 1, Qt::DashLine));
+
 	_lines[0x10301] = Line(QPen(QColor(0x0e, 0x10, 0x87), 1, Qt::SolidLine));
 	_lines[0x10307] = Line(QPen(QColor(0x05, 0x62, 0x0e), 1, Qt::SolidLine));
 	_lines[0x10309] = Line(QPen(QColor(0x0e, 0x10, 0x87), 1, Qt::SolidLine));
+
 	_lines[0x10401] = Line(QImage(":/marine/cable.png"));
 	_lines[0x10402] = Line(QImage(":/marine/pipeline.png"));
-	_lines[0x10404] = Line(QImage(":/marine/fishing-farm-line.png"));
-	_lines[0x10405] = Line(QImage(":/marine/pipeline-area-line.png"));
-	_lines[0x10406] = Line(QImage(":/marine/cable-area-line.png"));
+	_lines[0x10403] = Line(QPen(QColor(0, 0, 0), 2, Qt::DotLine));
+	_lines[0x10404] = Line(QPen(QColor(0, 0, 0), 1, Qt::DashLine));
+	_lines[0x210404] = Line(QImage(":/marine/fishing-farm-line.png"));
+	_lines[0x10405] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashLine));
+	_lines[0x210405] = Line(QImage(":/marine/pipeline-area-line.png"));
+	_lines[0x10406] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashLine));
+	_lines[0x210406] = Line(QImage(":/marine/cable-area-line.png"));
 	_lines[0x10407] = Line(QPen(QColor(0xa3, 0xa3, 0xa3), 1, Qt::DashLine));
+	_lines[0x210407] = Line(QImage(":/marine/dumping-ground-line.png"));
+	_lines[0x10408] = Line(QPen(QColor(0xff, 0x40, 0x40), 1, Qt::DashLine));
+	_lines[0x210408] = Line(QImage(":/marine/minefield-line.png"));
 	_lines[0x10409] = Line(QPen(QColor(0, 0, 0), 1, Qt::DotLine));
-	_lines[0x10501] = Line(QImage(":/marine/noanchor-line.png"));
-	_lines[0x10503] = Line(QImage(":/marine/entry-prohibited-line.png"));
+	_lines[0x210409] = Line(QPen(QColor(0, 0, 0), 1, Qt::DotLine));
+	_lines[0x1040b] = Line(QPen(QColor(0, 0, 0), 2, Qt::DashLine));
+	_lines[0x21040b] = Line(QPen(QColor(0, 0, 0), 2, Qt::DashLine));
+	_lines[0x1040c] = Line(QPen(QColor(0, 0, 0), 2));
+	_lines[0x21040c] = Line(QPen(QColor(0, 0, 0), 2));
+
+	_lines[0x10501] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashLine));
+	_lines[0x210501] = Line(QImage(":/marine/noanchor-line.png"));
+	_lines[0x10502] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashLine));
+	_lines[0x210502] = Line(QImage(":/marine/nofishing-line.png"));
+	_lines[0x10503] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashLine));
+	_lines[0x210503] = Line(QImage(":/marine/entry-prohibited-line.png"));
 	_lines[0x10504] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashLine));
-	_lines[0x10505] = Line(QImage(":/marine/safety-zone-line.png"));
-	_lines[0x10506] = Line(QImage(":/marine/nature-reserve-line.png"));
-	_lines[0x10507] = Line(QImage(":/marine/safety-zone-line.png"));
-	_lines[0x10601] = Line(QPen(QColor(0, 0, 0), 1, Qt::SolidLine));
-	_lines[0x10603] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 2, Qt::DashDotLine));
-	_lines[0x10606] = Line(QImage(":/marine/anchor-line.png"));
+	_lines[0x210504] = Line(QImage(":/marine/entry-prohibited-line.png"));
+	_lines[0x10505] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashLine));
+	_lines[0x210505] = Line(QImage(":/marine/noanchor-line.png"));
+	_lines[0x10506] = Line(QPen(QColor(0x30, 0xa0, 0x1b), 1, Qt::DashLine));
+	_lines[0x210506] = Line(QImage(":/marine/nature-reserve-line.png"));
+	_lines[0x10507] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashLine));
+	_lines[0x210507] = Line(QImage(":/marine/safety-zone-line.png"));
+	_lines[0x10508] = Line(QPen(QColor(0xff, 0x40, 0x40), 1, Qt::DashLine));
+	_lines[0x210508] = Line(QImage(":/marine/minefield-line.png"));
+
+	_lines[0x10601] = Line(QPen(QColor(0, 0, 0), 1));
+	_lines[0x110601] = Line(QPen(QColor(0, 0, 0), 1, Qt::DashLine));
+	_lines[0x10601 | 1<<24] = Line(QPen(QColor(0, 0x90, 0xfc), 1));
+	_lines[0x110601 | 1<<24] = Line(QPen(QColor(0, 0x90, 0xfc), 1, Qt::DashLine));
+	_lines[0x10601 | 2<<24] = Line(QPen(QColor(0x30, 0xa0, 0x1b), 1));
+	_lines[0x110601 | 2<<24] = Line(QPen(QColor(0x30, 0xa0, 0x1b), 1, Qt::DashLine));
+	_lines[0x10601 | 3<<24] = Line(QPen(QColor(0xa7, 0xf1, 0xfc), 1));
+	_lines[0x110601 | 3<<24] = Line(QPen(QColor(0xa7, 0xf1, 0xfc), 1, Qt::DashLine));
+	_lines[0x10601 | 4<<24] = Line(QPen(QColor(0xff, 0x40, 0x40), 1));
+	_lines[0x110601 | 4<<24] = Line(QPen(QColor(0xff, 0x40, 0x40), 1, Qt::DashLine));
+	_lines[0x10601 | 5<<24] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1));
+	_lines[0x110601 | 5<<24] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashLine));
+	_lines[0x10601 | 6<<24] = Line(QPen(QColor(0xfc, 0xe0, 0x1f), 1));
+	_lines[0x110601 | 6<<24] = Line(QPen(QColor(0xfc, 0xe0, 0x1f), 1, Qt::DashLine));
+	_lines[0x10601 | 7<<24] = Line(QPen(QColor(0xfc, 0x79, 0x1e), 1));
+	_lines[0x110601 | 7<<24] = Line(QPen(QColor(0xfc, 0x79, 0x1e), 1, Qt::DashLine));
+	_lines[0x10601 | 8<<24] = Line(QPen(QColor(0x40, 0x40, 0x40), 1));
+	_lines[0x110601 | 8<<24] = Line(QPen(QColor(0x40, 0x40, 0x40), 1, Qt::DashLine));
+	_lines[0x10601 | 9<<24] = Line(QPen(QColor(0x84, 0xe6, 0xfc), 1));
+	_lines[0x110601 | 9<<24] = Line(QPen(QColor(0x84, 0xe6, 0xfc), 1, Qt::DashLine));
+	_lines[0x10601 | 10<<24] = Line(QPen(QColor(0x83, 0x53, 0x15), 1));
+	_lines[0x110601 | 10<<24] = Line(QPen(QColor(0x83, 0x53, 0x15), 1, Qt::DashLine));
+	_lines[0x10601 | 11<<24] = Line(QPen(QColor(0xd2, 0xfc, 0xfc), 1));
+	_lines[0x110601 | 11<<24] = Line(QPen(QColor(0xd2, 0xfc, 0xfc), 1, Qt::DashLine));
+	_lines[0x10601 | 12<<24] = Line(QPen(QColor(0xc5, 0xf1, 0xc2), 1));
+	_lines[0x110601 | 12<<24] = Line(QPen(QColor(0xc5, 0xf1, 0xc2), 1, Qt::DashLine));
+	_lines[0x10601 | 13<<24] = Line(QPen(QColor(0xfc, 0xc6, 0xfc), 1));
+	_lines[0x110601 | 13<<24] = Line(QPen(QColor(0xfc, 0xc6, 0xfc), 1, Qt::DashLine));
+	_lines[0x10601 | 14<<24] = Line(QPen(QColor(0xe2, 0xdc, 0xa9), 1));
+	_lines[0x110601 | 14<<24] = Line(QPen(QColor(0xe2, 0xdc, 0xa9), 1, Qt::DashLine));
+	_lines[0x10601 | 15<<24] = Line(QPen(QColor(0xcd, 0xcd, 0xcd), 1));
+	_lines[0x110601 | 15<<24] = Line(QPen(QColor(0xcd, 0xcd, 0xcd), 1, Qt::DashLine));
+	_lines[0x10602] = Line(QPen(QColor(0xfc, 0xb4, 0xfc), 2));
+	_lines[0x210602] = Line(QPen(QColor(0xfc, 0xb4, 0xfc), 2));
+	_lines[0x10603] = Line(QImage(":/marine/international-maritime-boundary.png"));
+	_lines[0x210603] = Line(QImage(":/marine/international-maritime-boundary.png"));
+	_lines[0x10604] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1));
+	_lines[0x210604] = Line(QImage(":/marine/straight-territorial-sea-baseline.png"));
+	_lines[0x10605] = Line(QImage(":/marine/seaward-limit-of-territorial-sea.png"));
+	_lines[0x210605] = Line(QImage(":/marine/seaward-limit-of-territorial-sea.png"));
+	_lines[0x10606] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashLine));
+	_lines[0x210606] = Line(QImage(":/marine/anchor-line.png"));
+	_lines[0x10608] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashLine));
+	_lines[0x210608] = Line(QImage(":/marine/fishing-line.png"));
+	_lines[0x1060b] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashDotDotLine));
+	_lines[0x21060b] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::DashDotDotLine));
 	_lines[0x1060c] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::SolidLine));
+	_lines[0x21060c] = Line(QPen(QColor(0xe7, 0x28, 0xe7), 1, Qt::SolidLine));
 	_lines[0x1060d] = Line(QPen(QColor(0xeb, 0x49, 0xeb), 1, Qt::DashLine));
+	_lines[0x21060d] = Line(QPen(QColor(0xeb, 0x49, 0xeb), 1, Qt::DashLine));
+	_lines[0x1060e] = Line(QPen(QColor(0xff, 0x40, 0x40), 1, Qt::DashLine));
+	_lines[0x21060e] = Line(QPen(QColor(0xff, 0x40, 0x40), 1, Qt::DashLine));
 	_lines[0x10611] = Line(QPen(QColor(0xeb, 0x49, 0xeb), 1, Qt::DashLine));
+	_lines[0x210611] = Line(QPen(QColor(0xeb, 0x49, 0xeb), 1, Qt::DashLine));
 }
 
 void Style::defaultPointStyle(qreal ratio)
@@ -790,6 +866,8 @@ void Style::defaultPointStyle(qreal ratio)
 	COLORSET(0x10214, "beacon", 0, -8);
 	COLORSET(0x10215, "beacon", 0, -8);
 	_points[0x10216] = Point(QImage(":/marine/mooring-buoy.png"), QPoint(0, -5));
+	_points[0x10217] = Point(QImage(":/marine/pylon.png"));
+	_points[0x10218] = Point(QImage(":/marine/pylon.png"));
 
 	_points[0x10304] = Point(QImage(":/marine/building.png"));
 	_points[0x10305] = Point(QImage(":/marine/chimney.png"), QPoint(0, -11));
@@ -803,15 +881,35 @@ void Style::defaultPointStyle(qreal ratio)
 	_points[0x10401] = Point(QImage(":/marine/obstruction.png"));
 	_points[0x10402] = Point(QImage(":/marine/wreck.png"));
 	_points[0x10403] = Point(QImage(":/marine/wreck-exposed.png"), QPoint(0, -4));
+	_points[0x10405] = Point(QImage(":/marine/foul.png"));
 	_points[0x10408] = Point(QImage(":/marine/obstruction-covers.png"));
+	_points[0x10409] = Point(QImage(":/marine/fishing-farm.png"));
 	_points[0x1040a] = Point(QImage(":/marine/rock-dangerous.png"));
 	_points[0x1040c] = Point(QImage(":/marine/rock-exposed.png"));
+
+	_points[0x10500] = Point(Small, QColor(0, 0, 0));
+	_points[0x10500 | 1<<20] = Point(Small, QColor(0, 0x90, 0xfc));
+	_points[0x10500 | 2<<20] = Point(Small, QColor(0x30, 0xa0, 0x1b));
+	_points[0x10500 | 3<<20] = Point(Small, QColor(0xa7, 0xf1, 0xfc));
+	_points[0x10500 | 4<<20] = Point(Small, QColor(0xff, 0x40, 0x40));
+	_points[0x10500 | 5<<20] = Point(Small, QColor(0xe7, 0x28, 0xe7));
+	_points[0x10500 | 6<<20] = Point(Small, QColor(0xfc, 0xe0, 0x1f));
+	_points[0x10500 | 7<<20] = Point(Small, QColor(0xfc, 0x79, 0x1e));
+	_points[0x10500 | 8<<20] = Point(Small, QColor(0x40, 0x40, 0x40));
+	_points[0x10500 | 9<<20] = Point(Small, QColor(0x84, 0xe6, 0xfc));
+	_points[0x10500 | 10<<20] = Point(Small, QColor(0x83, 0x53, 0x15));
+	_points[0x10500 | 11<<20] = Point(Small, QColor(0xd2, 0xfc, 0xfc));
+	_points[0x10500 | 12<<20] = Point(Small, QColor(0xc5, 0xf1, 0xc2));
+	_points[0x10500 | 13<<20] = Point(Small, QColor(0xfc, 0xc6, 0xfc));
+	_points[0x10500 | 14<<20] = Point(Small, QColor(0xe2, 0xdc, 0xa9));
+	_points[0x10500 | 15<<20] = Point(Small, QColor(0xcd, 0xcd, 0xcd));
 
 	_points[0x10701] = Point(QImage(":/marine/anchorage.png"));
 	_points[0x10702] = Point(QImage(":/marine/boarding-place.png"));
 	_points[0x10703] = Point(QImage(":/marine/yacht-harbor.png"));
 	_points[0x10704] = Point(QImage(":/marine/pile.png"));
 	_points[0x10705] = Point(QImage(":/marine/anchoring-prohibited.png"));
+	_points[0x10708] = Point(QImage(":/marine/radio-call-garmin.png"));
 	_points[0x1070a] = Point(QImage(":/marine/rescue-station.png"));
 	_points[0x1070b] = Point(QImage(":/marine/fishing-harbor.png"));
 }

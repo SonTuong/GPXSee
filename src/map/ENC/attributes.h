@@ -5,6 +5,7 @@
 #define CATBUA 10
 #define CATCOV 18
 #define CATDIS 21
+#define CATDPG 23
 #define CATHAF 30
 #define CATLMK 35
 #define CATLIT 37
@@ -12,6 +13,7 @@
 #define CATMOR 40
 #define CATTRK 54
 #define CATREA 56
+#define CATSLC 60
 #define CATSIT 61
 #define CATSIL 63
 #define CATSCF 65
@@ -24,6 +26,7 @@
 #define DRVAL1 87
 #define ELEVAT 90
 #define FUNCTN 94
+#define JRSDTN 103
 #define LITVIS 108
 #define OBJNAM 116
 #define ORIENT 117
@@ -41,6 +44,7 @@
 #define I_CATSIT 17002
 #define I_RESTRN 17004
 #define I_CATHAF 17008
+#define I_CATSLC 17012
 #define I_RDOCAL 17017
 #define I_WTWDIS 17064
 #define I_CATBRT 17066

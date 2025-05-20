@@ -87,6 +87,7 @@ static QMap<uint,uint> orderMapInit()
 	map.insert(TYPE(BUISGL), 46);
 	map.insert(TYPE(ACHARE), 47);
 	map.insert(TYPE(I_ACHARE), 47);
+	map.insert(TYPE(DMPGRD), 48);
 
 	map.insert(TYPE(I_DISMAR), 0xFFFFFFFE);
 	map.insert(TYPE(SOUNDG), 0xFFFFFFFF);
@@ -191,7 +192,7 @@ static bool polygonPointCb(const MapData::Poly *polygon, void *context)
 	if (baseType == TSSLPT || baseType == RCTLPT || baseType == I_TRNBSN
 	  || baseType == BRIDGE || baseType == I_BRIDGE || baseType == BUAARE
 	  || baseType == LNDARE || baseType == LNDRGN || baseType == I_BUNSTA
-	  || baseType == PILBOP
+	  || baseType == PILBOP || baseType == DMPGRD
 	  || type == SUBTYPE(ACHARE, 2) || type == SUBTYPE(I_ACHARE, 2)
 	  || type == SUBTYPE(ACHARE, 3) || type == SUBTYPE(I_ACHARE, 3)
 	  || type == SUBTYPE(ACHARE, 9) || type == SUBTYPE(I_ACHARE, 9)
@@ -199,6 +200,7 @@ static bool polygonPointCb(const MapData::Poly *polygon, void *context)
 	  || type == SUBTYPE(I_ACHARE, 12) || type == SUBTYPE(I_BERTHS, 6)
 	  || type == SUBTYPE(RESARE, 1) || type == SUBTYPE(I_RESARE, 1)
 	  || type == SUBTYPE(RESARE, 2) || type == SUBTYPE(I_RESARE, 2)
+	  || type == SUBTYPE(RESARE, 3) || type == SUBTYPE(I_RESARE, 3)
 	  || type == SUBTYPE(RESARE, 4) || type == SUBTYPE(I_RESARE, 4)
 	  || type == SUBTYPE(RESARE, 5) || type == SUBTYPE(I_RESARE, 5)
 	  || type == SUBTYPE(RESARE, 6) || type == SUBTYPE(I_RESARE, 6)
@@ -323,6 +325,8 @@ static uint restrictionCategory(uint type, const MapData::Attributes &attr)
 
 		if (restrn == 1)
 			return 2;
+		else if (restrn == 3)
+			return 3;
 		else if (restrn == 7)
 			return 17;
 		else
@@ -335,8 +339,12 @@ static uint color(const QList<QByteArray> &list)
 {
 	uint c = 0;
 
-	for (int i = 0; i < list.size() && i < 4; i++)
-		c |= list.at(i).toUInt() << (i * 4);
+	for (int i = 0, j = 0; i < list.size() && j < 4; i++) {
+		if (!(i && list.at(i) == list.at(i-1))) {
+			c |= list.at(i).toUInt() << (j * 4);
+			j++;
+		}
+	}
 
 	return c;
 }
@@ -447,7 +455,7 @@ MapData::Point::Point(uint type, const Coordinates &c, const Attributes &attr,
 		if (ok && clr > 0)
 			_label = QString::fromUtf8("\xE2\x86\x95") + UNIT_SPACE
 			  + QString::number(clr) + UNIT_SPACE + hUnits(HUNI);
-	} else if (type == OBSTRN || type == WRECKS) {
+	} else if (type == OBSTRN || type == WRECKS || type == UWTROC) {
 		double depth = _attr.value(VALSOU).toDouble(&ok);
 		if (ok && _label.isEmpty())
 			_label = QString::number(depth);
@@ -474,6 +482,14 @@ MapData::Poly::Poly(uint type, const Polygon &path, const Attributes &attr,
 		subtype = I_CATBRT;
 	else if (type == M_COVR)
 		subtype = CATCOV;
+	else if (type == DMPGRD)
+		subtype = CATDPG;
+	else if (type == SLCONS)
+		subtype = CATSLC;
+	else if (type == I_SLCONS)
+		subtype = I_CATSLC;
+	else if (type == ADMARE)
+		subtype = JRSDTN;
 
 	switch (type) {
 		case DEPARE:
@@ -509,6 +525,8 @@ MapData::Line::Line(uint type, const QVector<Coordinates> &path,
 		_label = QString::fromLatin1(_attr.value(VALDCO));
 	else if (type == LNDELV)
 		_label = QString::fromLatin1(_attr.value(ELEVAT));
+	else if (type == RECTRC)
+		_label = QString::fromLatin1(_attr.value(ORIENT));
 	else
 		_label = QString::fromLatin1(_attr.value(OBJNAM));
 }

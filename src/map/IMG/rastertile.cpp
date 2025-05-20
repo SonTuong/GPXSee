@@ -186,6 +186,21 @@ void RasterTile::drawPolygons(QPainter *painter,
 	}
 }
 
+static quint32 lineType(quint32 type, quint32 flags)
+{
+	if (Style::isCartographicLine(type)) {
+		if (flags & MapData::Poly::Dashed)
+			return type | (flags & 0xFF000000) | 1<<20;
+		else
+			return type | (flags & 0xFF000000);
+	} else if (Style::isRecommendedRoute(type))
+		return (flags & MapData::Poly::Dashed) ? type | 1<<20 : type;
+	else if (flags & MapData::Poly::Direction)
+		return type | 2<<20;
+	else
+		return type;
+}
+
 void RasterTile::drawLines(QPainter *painter,
   const QList<MapData::Poly> &lines) const
 {
@@ -204,11 +219,15 @@ void RasterTile::drawLines(QPainter *painter,
 
 	for (int i = 0; i < lines.size(); i++) {
 		const MapData::Poly &poly = lines.at(i);
-		const Style::Line &style = _data->style()->line(poly.type);
+		const Style::Line &style = _data->style()->line(
+		  lineType(poly.type, poly.flags));
 
-		if (!style.img().isNull())
-			BitmapLine::draw(painter, poly.points, style.img());
-		else if (style.foreground() != Qt::NoPen) {
+		if (!style.img().isNull()) {
+			if (poly.flags & MapData::Poly::Invert)
+				BitmapLine::drawR(painter, poly.points, style.img());
+			else
+				BitmapLine::draw(painter, poly.points, style.img());
+		} else if (style.foreground() != Qt::NoPen) {
 			painter->setPen(style.foreground());
 			painter->drawPolyline(poly.points);
 		}
@@ -383,7 +402,7 @@ void RasterTile::processStreetNames(const QList<MapData::Poly> &lines,
 		  ? &style.text().color() : Style::isContourLine(poly.type)
 			? 0 : &textColor;
 		const QColor *hColor = Style::isContourLine(poly.type) ? 0 : &haloColor;
-		const QImage *img = poly.oneway
+		const QImage *img = (poly.flags & MapData::Poly::OneWay)
 		  ? Style::isWaterLine(poly.type)
 			? &arrows[WATER] : &arrows[ROAD] : 0;
 		const QString *label = poly.label.text().isEmpty()
@@ -523,7 +542,8 @@ void RasterTile::processPoints(QList<MapData::Point> &points,
 		const MapData::Point &point = points.at(i);
 		const Style *style = _data->style();
 		const Style::Point &ps = style->point(Style::hasColorset(point.type)
-		  ? point.type | (point.flags & 0xFF000000) : point.type);
+		  ? point.type | (point.flags & 0xFF000000)
+		  : point.type | (point.flags & 0x00F00000));
 		bool poi = Style::isPOI(point.type);
 		bool sl = sectorLight(point.lights);
 
@@ -559,8 +579,6 @@ void RasterTile::processPoints(QList<MapData::Point> &points,
 		} else
 			delete item;
 	}
-
-
 }
 
 void RasterTile::fetchData(QList<MapData::Poly> &polygons,

@@ -21,25 +21,26 @@ using namespace Util;
 	PNT(type, 4, ":/marine/" name "-green.png", dx, dy); \
 	PNT(type, 5, ":/marine/" name ".png", dx, dy); \
 	PNT(type, 6, ":/marine/" name "-yellow.png", dx, dy); \
-	PNT(type, 7, ":/marine/" name ".png", dx, dy); \
-	PNT(type, 8, ":/marine/" name ".png", dx, dy); \
-	PNT(type, 9, ":/marine/" name "-yellow.png", dx, dy); \
+	PNT(type, 7, ":/marine/" name "-grey.png", dx, dy); \
+	PNT(type, 8, ":/marine/" name "-orange.png", dx, dy); \
+	PNT(type, 9, ":/marine/" name "-orange.png", dx, dy); \
 	PNT(type, 10, ":/marine/" name ".png", dx, dy); \
-	PNT(type, 11, ":/marine/" name "-yellow.png", dx, dy); \
+	PNT(type, 11, ":/marine/" name "-orange.png", dx, dy); \
 	PNT(type, 12, ":/marine/" name ".png", dx, dy); \
 	PNT(type, 13, ":/marine/" name ".png", dx, dy); \
 	PNT(type, COLOR2(1, 2), ":/marine/" name "-white-black.png", dx, dy); \
 	PNT(type, COLOR2(1, 3), ":/marine/" name "-white-red.png", dx, dy); \
 	PNT(type, COLOR2(1, 4), ":/marine/" name "-white-green.png", dx, dy); \
 	PNT(type, COLOR2(1, 6), ":/marine/" name "-white-yellow.png", dx, dy); \
-	PNT(type, COLOR2(1, 9), ":/marine/" name "-white-yellow.png", dx, dy); \
-	PNT(type, COLOR2(1, 11), ":/marine/" name "-white-yellow.png", dx, dy); \
+	PNT(type, COLOR2(1, 8), ":/marine/" name "-white-orange.png", dx, dy); \
+	PNT(type, COLOR2(1, 9), ":/marine/" name "-white-orange.png", dx, dy); \
+	PNT(type, COLOR2(1, 11), ":/marine/" name "-white-orange.png", dx, dy); \
 	PNT(type, COLOR2(2, 1), ":/marine/" name "-black-white.png", dx, dy); \
 	PNT(type, COLOR2(2, 3), ":/marine/" name "-black-red.png", dx, dy); \
 	PNT(type, COLOR2(2, 4), ":/marine/" name "-black-green.png", dx, dy); \
 	PNT(type, COLOR2(2, 6), ":/marine/" name "-black-yellow.png", dx, dy); \
-	PNT(type, COLOR2(2, 9), ":/marine/" name "-black-yellow.png", dx, dy); \
-	PNT(type, COLOR2(2, 11), ":/marine/" name "-black-yellow.png", dx, dy); \
+	PNT(type, COLOR2(2, 9), ":/marine/" name "-black-orange.png", dx, dy); \
+	PNT(type, COLOR2(2, 11), ":/marine/" name "-black-orange.png", dx, dy); \
 	PNT(type, COLOR2(3, 1), ":/marine/" name "-red-white.png", dx, dy); \
 	PNT(type, COLOR2(3, 2), ":/marine/" name "-red-black.png", dx, dy); \
 	PNT(type, COLOR2(3, 4), ":/marine/" name "-red-green.png", dx, dy); \
@@ -48,14 +49,15 @@ using namespace Util;
 	PNT(type, COLOR2(4, 2), ":/marine/" name "-green-black.png", dx, dy); \
 	PNT(type, COLOR2(4, 3), ":/marine/" name "-green-red.png", dx, dy); \
 	PNT(type, COLOR2(6, 1), ":/marine/" name "-yellow-white.png", dx, dy); \
-	PNT(type, COLOR2(9, 1), ":/marine/" name "-yellow-white.png", dx, dy); \
-	PNT(type, COLOR2(11, 1), ":/marine/" name "-yellow-white.png", dx, dy); \
+	PNT(type, COLOR2(8, 1), ":/marine/" name "-orange-white.png", dx, dy); \
+	PNT(type, COLOR2(9, 1), ":/marine/" name "-orange-white.png", dx, dy); \
+	PNT(type, COLOR2(11, 1), ":/marine/" name "-orange-white.png", dx, dy); \
 	PNT(type, COLOR2(6, 2), ":/marine/" name "-yellow-black.png", dx, dy); \
-	PNT(type, COLOR2(9, 2), ":/marine/" name "-yellow-black.png", dx, dy); \
-	PNT(type, COLOR2(11, 2), ":/marine/" name "-yellow-black.png", dx, dy); \
+	PNT(type, COLOR2(9, 2), ":/marine/" name "-orange-black.png", dx, dy); \
+	PNT(type, COLOR2(11, 2), ":/marine/" name "-orange-black.png", dx, dy); \
 	PNT(type, COLOR3(1, 6, 1), ":/marine/" name "-white-yellow-white.png", dx, dy); \
-	PNT(type, COLOR3(1, 9, 1), ":/marine/" name "-white-yellow-white.png", dx, dy); \
-	PNT(type, COLOR3(1, 11, 1), ":/marine/" name "-white-yellow-white.png", dx, dy); \
+	PNT(type, COLOR3(1, 9, 1), ":/marine/" name "-white-orange-white.png", dx, dy); \
+	PNT(type, COLOR3(1, 11, 1), ":/marine/" name "-white-orange-white.png", dx, dy); \
 	PNT(type, COLOR3(2, 1, 2), ":/marine/" name "-black-white-black.png", dx, dy); \
 	PNT(type, COLOR3(2, 3, 2), ":/marine/" name "-black-red-black.png", dx, dy); \
 	PNT(type, COLOR3(2, 6, 2), ":/marine/" name "-black-yellow-black.png", dx, dy); \
@@ -104,7 +106,19 @@ void Style::polygonStyle()
 	_polygons[SUBTYPE(DEPARE, 5)] = Polygon(QBrush(QColor(0xc0, 0xe0, 0xff)));
 	_polygons[SUBTYPE(DEPARE, 6)] = Polygon(QBrush(QColor(0xff, 0xff, 0xff)));
 	_polygons[TYPE(DMPGRD)] = Polygon(QBrush(QColor(0xa3, 0xa3, 0xa3),
-	  Qt::Dense3Pattern));
+	  Qt::Dense5Pattern));
+	_polygons[SUBTYPE(DMPGRD, 1)] = Polygon(QBrush(QColor(0xa3, 0xa3, 0xa3),
+	  Qt::Dense5Pattern));
+	_polygons[SUBTYPE(DMPGRD, 2)] = Polygon(QBrush(QColor(0xa3, 0xa3, 0xa3),
+	  Qt::Dense5Pattern));
+	_polygons[SUBTYPE(DMPGRD, 3)] = Polygon(QBrush(QColor(0xa3, 0xa3, 0xa3),
+	  Qt::Dense5Pattern));
+	_polygons[SUBTYPE(DMPGRD, 4)] = Polygon(QBrush(QColor(0xff, 0x40, 0x40),
+	  Qt::Dense5Pattern));
+	_polygons[SUBTYPE(DMPGRD, 5)] = Polygon(QBrush(QColor(0xa3, 0xa3, 0xa3),
+	  Qt::Dense5Pattern));
+	_polygons[SUBTYPE(DMPGRD, 6)] = Polygon(QBrush(QColor(0xa3, 0xa3, 0xa3),
+	  Qt::Dense5Pattern));
 	_polygons[TYPE(FAIRWY)] = Polygon(Qt::NoBrush, QPen(QColor(0x88, 0x88, 0x88),
 	  1, Qt::DashDotDotLine));
 	_polygons[TYPE(OBSTRN)] = Polygon(Qt::NoBrush, QPen(QColor(0, 0, 0), 1.5,
@@ -116,10 +130,57 @@ void Style::polygonStyle()
 	_polygons[TYPE(HULKES)] = Polygon(QBrush(QColor(0x33, 0x33, 0x33)));
 	_polygons[TYPE(I_HULKES)] = Polygon(QBrush(QColor(0x33, 0x33, 0x33)));
 	_polygons[TYPE(DRYDOC)] = Polygon(QBrush(QColor(0x33, 0x33, 0x33)));
-	_polygons[TYPE(SLCONS)] = Polygon(Qt::NoBrush,
-	  QPen(QColor(0x33, 0x33, 0x33), 1.5, Qt::DashLine));
-	_polygons[TYPE(I_SLCONS)] = Polygon(Qt::NoBrush,
-	  QPen(QColor(0x33, 0x33, 0x33), 1.5, Qt::DashLine));
+	_polygons[TYPE(SLCONS)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64)),
+	  QPen(QColor(0, 0, 0), 2));
+	_polygons[SUBTYPE(SLCONS, 1)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64),
+	  Qt::Dense4Pattern), QPen(QColor(0, 0, 0), 2));
+	_polygons[SUBTYPE(SLCONS, 2)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64),
+	  Qt::Dense4Pattern), QPen(QColor(0, 0, 0), 2, Qt::DashLine));
+	_polygons[SUBTYPE(SLCONS, 3)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64)),
+	  QPen(QColor(0, 0, 0), 2));
+	_polygons[SUBTYPE(SLCONS, 4)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64)),
+	  QPen(QColor(0, 0, 0), 2));
+	_polygons[SUBTYPE(SLCONS, 5)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64)),
+	  QPen(QColor(0, 0, 0), 2));
+	_polygons[SUBTYPE(SLCONS, 6)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64)),
+	  QPen(QColor(0, 0, 0), 2));
+	_polygons[SUBTYPE(SLCONS, 7)] = Polygon(Qt::NoBrush, QPen(QColor(0, 0, 0),
+	  2, Qt::DashLine));
+	_polygons[SUBTYPE(SLCONS, 8)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64),
+	  Qt::Dense4Pattern), QPen(QColor(0, 0, 0), 2));
+	_polygons[SUBTYPE(SLCONS, 9)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64),
+	  Qt::Dense4Pattern), QPen(QColor(0, 0, 0), 2));
+	_polygons[SUBTYPE(SLCONS, 10)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64)),
+	  QPen(QColor(0, 0, 0), 2));
+	_polygons[SUBTYPE(SLCONS, 11)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64)),
+	  QPen(QColor(0, 0, 0), 2));
+	_polygons[SUBTYPE(SLCONS, 12)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64)),
+	  QPen(QColor(0, 0, 0), 2, Qt::DashLine));
+	_polygons[SUBTYPE(SLCONS, 13)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64)),
+	  QPen(QColor(0, 0, 0), 2, Qt::DashLine));
+	_polygons[SUBTYPE(SLCONS, 14)] = Polygon(QBrush(QColor(0xe8, 0xe0, 0x64)),
+	  QPen(QColor(0, 0, 0), 2));
+	_polygons[SUBTYPE(SLCONS, 15)] = Polygon(Qt::NoBrush, QPen(QColor(0, 0, 0), 2));
+	_polygons[SUBTYPE(SLCONS, 16)] = Polygon(Qt::NoBrush, QPen(QColor(0, 0, 0),
+	  2, Qt::DashLine));
+	_polygons[TYPE(I_SLCONS)] = _polygons[TYPE(SLCONS)];
+	_polygons[SUBTYPE(I_SLCONS, 1)] = _polygons[SUBTYPE(SLCONS, 1)];
+	_polygons[SUBTYPE(I_SLCONS, 2)] = _polygons[SUBTYPE(SLCONS, 2)];
+	_polygons[SUBTYPE(I_SLCONS, 3)] = _polygons[SUBTYPE(SLCONS, 3)];
+	_polygons[SUBTYPE(I_SLCONS, 4)] = _polygons[SUBTYPE(SLCONS, 4)];
+	_polygons[SUBTYPE(I_SLCONS, 5)] = _polygons[SUBTYPE(SLCONS, 5)];
+	_polygons[SUBTYPE(I_SLCONS, 6)] = _polygons[SUBTYPE(SLCONS, 6)];
+	_polygons[SUBTYPE(I_SLCONS, 7)] = _polygons[SUBTYPE(SLCONS, 7)];
+	_polygons[SUBTYPE(I_SLCONS, 8)] = _polygons[SUBTYPE(SLCONS, 8)];
+	_polygons[SUBTYPE(I_SLCONS, 9)] = _polygons[SUBTYPE(SLCONS, 9)];
+	_polygons[SUBTYPE(I_SLCONS, 10)] = _polygons[SUBTYPE(SLCONS, 10)];
+	_polygons[SUBTYPE(I_SLCONS, 11)] = _polygons[SUBTYPE(SLCONS, 11)];
+	_polygons[SUBTYPE(I_SLCONS, 12)] = _polygons[SUBTYPE(SLCONS, 12)];
+	_polygons[SUBTYPE(I_SLCONS, 13)] = _polygons[SUBTYPE(SLCONS, 13)];
+	_polygons[SUBTYPE(I_SLCONS, 14)] = _polygons[SUBTYPE(SLCONS, 14)];
+	_polygons[SUBTYPE(I_SLCONS, 15)] = _polygons[SUBTYPE(SLCONS, 15)];
+	_polygons[SUBTYPE(I_SLCONS, 16)] = _polygons[SUBTYPE(SLCONS, 16)];
+	_polygons[SUBTYPE(I_SLCONS, 19)] = Polygon(Qt::NoBrush, QPen(QColor(0, 0, 0), 2));
 	_polygons[TYPE(LAKARE)] = Polygon(QBrush(QColor(0x9f, 0xc4, 0xe1)),
 	  QPen(QColor(0, 0, 0), 1));
 	_polygons[TYPE(CANALS)] = Polygon(QBrush(QColor(0x9f, 0xc4, 0xe1)),
@@ -134,6 +195,7 @@ void Style::polygonStyle()
 	_polygons[TYPE(UNSARE)] = Polygon(QBrush(QColor(0x99, 0x99, 0x99)));
 	_polygons[SUBTYPE(RESARE, 1)] = Polygon(QImage(":/marine/safety-zone-line.png"));
 	_polygons[SUBTYPE(RESARE, 2)] = Polygon(QImage(":/marine/noanchor-line.png"));
+	_polygons[SUBTYPE(RESARE, 3)] = Polygon(QImage(":/marine/nofishing-line.png"));
 	_polygons[SUBTYPE(RESARE, 4)] = Polygon(QImage(":/marine/nature-reserve-line.png"));
 	_polygons[SUBTYPE(RESARE, 5)] = Polygon(QImage(":/marine/sanctuary-line.png"));
 	_polygons[SUBTYPE(RESARE, 6)] = Polygon(QImage(":/marine/sanctuary-line.png"));
@@ -151,6 +213,7 @@ void Style::polygonStyle()
 	_polygons[SUBTYPE(RESARE, 26)] = Polygon(QImage(":/marine/safety-zone-line.png"));
 	_polygons[SUBTYPE(I_RESARE, 1)] = _polygons[SUBTYPE(RESARE, 1)];
 	_polygons[SUBTYPE(I_RESARE, 2)] = _polygons[SUBTYPE(RESARE, 2)];
+	_polygons[SUBTYPE(I_RESARE, 3)] = _polygons[SUBTYPE(RESARE, 3)];
 	_polygons[SUBTYPE(I_RESARE, 4)] = _polygons[SUBTYPE(RESARE, 4)];
 	_polygons[SUBTYPE(I_RESARE, 5)] = _polygons[SUBTYPE(RESARE, 5)];
 	_polygons[SUBTYPE(I_RESARE, 6)] = _polygons[SUBTYPE(RESARE, 6)];
@@ -225,10 +288,14 @@ void Style::polygonStyle()
 	_polygons[SUBTYPE(I_BERTHS, 6)] = _polygons[TYPE(BERTHS)];
 	_polygons[TYPE(I_TRNBSN)] = Polygon(Qt::NoBrush, QPen(QColor(0xeb, 0x49, 0xeb),
 	  1, Qt::DashLine));
-	_polygons[TYPE(CONZNE)] = Polygon(Qt::NoBrush, QPen(QColor(0xeb, 0x49, 0xeb),
-	  1, Qt::DashDotLine));
 	_polygons[TYPE(PILBOP)] = Polygon(Qt::NoBrush, QPen(QColor(0xeb, 0x49, 0xeb),
 	  1, Qt::DashLine));
+	_polygons[TYPE(CONZNE)] = Polygon(
+	  QImage(":/marine/seaward-limit-of-contiguous-zone.png"));
+	_polygons[TYPE(TESARE)] = Polygon(
+	  QImage(":/marine/seaward-limit-of-territorial-sea.png"));
+	_polygons[SUBTYPE(ADMARE, 2)] = Polygon(
+	  QImage(":/marine/international-maritime-boundary.png"));
 
 	_drawOrder
 	  << TYPE(LNDARE) << SUBTYPE(DEPARE, 0) << SUBTYPE(DEPARE, 1)
@@ -238,32 +305,46 @@ void Style::polygonStyle()
 	  << TYPE(DRGARE) << TYPE(FAIRWY) << TYPE(LOKBSN) << TYPE(I_LOKBSN)
 	  << TYPE(BUAARE) << TYPE(BUISGL) << TYPE(SILTNK) << TYPE(AIRARE)
 	  << TYPE(BRIDGE) << TYPE(I_BRIDGE) << TYPE(TUNNEL) << TYPE(I_TERMNL)
-	  << TYPE(SLCONS) << TYPE(I_SLCONS) << TYPE(PONTON) << TYPE(I_PONTON)
-	  << TYPE(HULKES) << TYPE(I_HULKES) << TYPE(FLODOC) << TYPE(I_FLODOC)
-	  << TYPE(DRYDOC) << TYPE(DAMCON) << TYPE(PYLONS) << TYPE(MORFAC)
-	  << TYPE(GATCON) << TYPE(I_GATCON) << TYPE(BERTHS) << TYPE(I_BERTHS)
-	  << SUBTYPE(I_BERTHS, 6) << TYPE(DMPGRD) << TYPE(TSEZNE) << TYPE(OBSTRN)
-	  << TYPE(UWTROC) << TYPE(DWRTPT) << SUBTYPE(ACHARE, 1)
-	  << SUBTYPE(ACHARE, 2) << SUBTYPE(ACHARE, 3) << SUBTYPE(ACHARE, 4)
-	  << SUBTYPE(ACHARE, 5) << SUBTYPE(ACHARE, 6) << SUBTYPE(ACHARE, 7)
-	  << SUBTYPE(ACHARE, 8) << SUBTYPE(ACHARE, 9) << SUBTYPE(I_ACHARE, 1)
-	  << SUBTYPE(I_ACHARE, 2) << SUBTYPE(I_ACHARE, 3) << SUBTYPE(I_ACHARE, 4)
-	  << SUBTYPE(I_ACHARE, 5) << SUBTYPE(I_ACHARE, 6) << SUBTYPE(I_ACHARE, 7)
-	  << SUBTYPE(I_ACHARE, 8) << SUBTYPE(I_ACHARE, 9) << SUBTYPE(I_ACHARE, 10)
-	  << SUBTYPE(I_ACHARE, 11) << SUBTYPE(I_ACHARE, 12) << SUBTYPE(RESARE, 1)
-	  << SUBTYPE(I_RESARE, 1) << SUBTYPE(RESARE, 2) << SUBTYPE(I_RESARE, 2)
-	  << SUBTYPE(RESARE, 4) << SUBTYPE(I_RESARE, 4) << SUBTYPE(RESARE, 5)
-	  << SUBTYPE(I_RESARE, 5) << SUBTYPE(RESARE, 6) << SUBTYPE(I_RESARE, 6)
-	  << SUBTYPE(RESARE, 7) << SUBTYPE(I_RESARE, 7) << SUBTYPE(RESARE, 8)
-	  << SUBTYPE(I_RESARE, 8) << SUBTYPE(RESARE, 9) << SUBTYPE(I_RESARE, 9)
-	  << SUBTYPE(RESARE, 12) << SUBTYPE(I_RESARE, 12) << SUBTYPE(RESARE, 14)
-	  << SUBTYPE(I_RESARE, 14) << SUBTYPE(RESARE, 17) << SUBTYPE(I_RESARE, 17)
-	  << SUBTYPE(RESARE, 22) << SUBTYPE(I_RESARE, 22) << SUBTYPE(RESARE, 23)
-	  << SUBTYPE(I_RESARE, 23) << SUBTYPE(RESARE, 25) << SUBTYPE(I_RESARE, 25)
-	  << SUBTYPE(RESARE, 26) << SUBTYPE(I_RESARE, 26) << TYPE(CBLARE)
-	  << TYPE(PIPARE) << TYPE(PRCARE) << TYPE(I_TRNBSN) << TYPE(PILBOP)
-	  << SUBTYPE(MARCUL, 0) << SUBTYPE(MARCUL, 1) << SUBTYPE(MARCUL, 2)
-	  << SUBTYPE(MARCUL, 3) << TYPE(CONZNE);
+	  << TYPE(SLCONS) << SUBTYPE(SLCONS, 1) << SUBTYPE(SLCONS, 2)
+	  << SUBTYPE(SLCONS, 8) << SUBTYPE(SLCONS, 9) << SUBTYPE(SLCONS, 3)
+	  << SUBTYPE(SLCONS, 4) << SUBTYPE(SLCONS, 5) << SUBTYPE(SLCONS, 6)
+	  << SUBTYPE(SLCONS, 7) << SUBTYPE(SLCONS, 10) << SUBTYPE(SLCONS, 11)
+	  << SUBTYPE(SLCONS, 12) << SUBTYPE(SLCONS, 13) << SUBTYPE(SLCONS, 14)
+	  << SUBTYPE(SLCONS, 15) << SUBTYPE(SLCONS, 16) << TYPE(I_SLCONS)
+	  << SUBTYPE(I_SLCONS, 1) << SUBTYPE(I_SLCONS, 2) << SUBTYPE(I_SLCONS, 3)
+	  << SUBTYPE(I_SLCONS, 4) << SUBTYPE(I_SLCONS, 5) << SUBTYPE(I_SLCONS, 6)
+	  << SUBTYPE(I_SLCONS, 7) << SUBTYPE(I_SLCONS, 8) << SUBTYPE(I_SLCONS, 9)
+	  << SUBTYPE(I_SLCONS, 10) << SUBTYPE(I_SLCONS, 11) << SUBTYPE(I_SLCONS, 12)
+	  << SUBTYPE(I_SLCONS, 13) << SUBTYPE(I_SLCONS, 14) << SUBTYPE(I_SLCONS, 15)
+	  << SUBTYPE(I_SLCONS, 16) << SUBTYPE(I_SLCONS, 19) << TYPE(PONTON)
+	  << TYPE(I_PONTON) << TYPE(HULKES) << TYPE(I_HULKES) << TYPE(FLODOC)
+	  << TYPE(I_FLODOC) << TYPE(DRYDOC) << TYPE(DAMCON) << TYPE(PYLONS)
+	  << TYPE(MORFAC) << TYPE(GATCON) << TYPE(I_GATCON) << TYPE(BERTHS)
+	  << TYPE(I_BERTHS) << SUBTYPE(I_BERTHS, 6) << TYPE(DMPGRD)
+	  << SUBTYPE(DMPGRD, 1) << SUBTYPE(DMPGRD, 2) << SUBTYPE(DMPGRD, 3)
+	  << SUBTYPE(DMPGRD, 4) << SUBTYPE(DMPGRD, 5) << SUBTYPE(DMPGRD, 6)
+	  << TYPE(TSEZNE) << TYPE(OBSTRN) << TYPE(UWTROC) << TYPE(DWRTPT)
+	  << SUBTYPE(ACHARE, 1) << SUBTYPE(ACHARE, 2) << SUBTYPE(ACHARE, 3)
+	  << SUBTYPE(ACHARE, 4) << SUBTYPE(ACHARE, 5) << SUBTYPE(ACHARE, 6)
+	  << SUBTYPE(ACHARE, 7) << SUBTYPE(ACHARE, 8) << SUBTYPE(ACHARE, 9)
+	  << SUBTYPE(I_ACHARE, 1) << SUBTYPE(I_ACHARE, 2) << SUBTYPE(I_ACHARE, 3)
+	  << SUBTYPE(I_ACHARE, 4) << SUBTYPE(I_ACHARE, 5) << SUBTYPE(I_ACHARE, 6)
+	  << SUBTYPE(I_ACHARE, 7) << SUBTYPE(I_ACHARE, 8) << SUBTYPE(I_ACHARE, 9)
+	  << SUBTYPE(I_ACHARE, 10) << SUBTYPE(I_ACHARE, 11) << SUBTYPE(I_ACHARE, 12)
+	  << SUBTYPE(RESARE, 1) << SUBTYPE(I_RESARE, 1) << SUBTYPE(RESARE, 2)
+	  << SUBTYPE(I_RESARE, 2) << SUBTYPE(RESARE, 4) << SUBTYPE(I_RESARE, 4)
+	  << SUBTYPE(RESARE, 5) << SUBTYPE(I_RESARE, 5) << SUBTYPE(RESARE, 6)
+	  << SUBTYPE(I_RESARE, 6) << SUBTYPE(RESARE, 7) << SUBTYPE(I_RESARE, 7)
+	  << SUBTYPE(RESARE, 8) << SUBTYPE(I_RESARE, 8) << SUBTYPE(RESARE, 9)
+	  << SUBTYPE(I_RESARE, 9) << SUBTYPE(RESARE, 12) << SUBTYPE(I_RESARE, 12)
+	  << SUBTYPE(RESARE, 14) << SUBTYPE(I_RESARE, 14) << SUBTYPE(RESARE, 17)
+	  << SUBTYPE(I_RESARE, 17) << SUBTYPE(RESARE, 22) << SUBTYPE(I_RESARE, 22)
+	  << SUBTYPE(RESARE, 23) << SUBTYPE(I_RESARE, 23) << SUBTYPE(RESARE, 25)
+	  << SUBTYPE(I_RESARE, 25) << SUBTYPE(RESARE, 26) << SUBTYPE(I_RESARE, 26)
+	  << TYPE(CBLARE) << TYPE(PIPARE) << TYPE(PRCARE) << TYPE(I_TRNBSN)
+	  << TYPE(PILBOP) << SUBTYPE(MARCUL, 0) << SUBTYPE(MARCUL, 1)
+	  << SUBTYPE(MARCUL, 2) << SUBTYPE(MARCUL, 3) << TYPE(CONZNE)
+	  << TYPE(TESARE) << SUBTYPE(ADMARE, 2);
 }
 
 void Style::lineStyle(qreal ratio)
@@ -282,8 +363,33 @@ void Style::lineStyle(qreal ratio)
 	_lines[TYPE(PIPSOL)].setTextFontSize(Small);
 	_lines[TYPE(NAVLNE)] = Line(QPen(QColor(0, 0, 0), 1, Qt::DashLine));
 	_lines[TYPE(COALNE)] = Line(QPen(QColor(0, 0, 0), 1, Qt::SolidLine));
-	_lines[TYPE(SLCONS)] = Line(QPen(QColor(0, 0, 0), 2, Qt::SolidLine));
-	_lines[TYPE(I_SLCONS)] = Line(QPen(QColor(0, 0, 0), 2, Qt::SolidLine));
+	_lines[TYPE(SLCONS)] = Line(QPen(QColor(0, 0, 0), 2));
+	_lines[SUBTYPE(SLCONS, 1)] = Line(QPen(QColor(0, 0, 0), 2));
+	_lines[SUBTYPE(SLCONS, 2)] = Line(QPen(QColor(0, 0, 0), 2, Qt::DashLine));
+	_lines[SUBTYPE(SLCONS, 3)] = Line(QPen(QColor(0, 0, 0), 2));
+	_lines[SUBTYPE(SLCONS, 4)] = Line(QPen(QColor(0, 0, 0), 2));
+	_lines[SUBTYPE(SLCONS, 5)] = Line(QPen(QColor(0, 0, 0), 2));
+	_lines[SUBTYPE(SLCONS, 6)] = Line(QPen(QColor(0, 0, 0), 2));
+	_lines[SUBTYPE(SLCONS, 7)] = Line(QPen(QColor(0, 0, 0), 2, Qt::DashLine));
+	_lines[SUBTYPE(SLCONS, 10)] = Line(QPen(QColor(0, 0, 0), 2));
+	_lines[SUBTYPE(SLCONS, 11)] = Line(QPen(QColor(0, 0, 0), 2));
+	_lines[SUBTYPE(SLCONS, 12)] = Line(QPen(QColor(0, 0, 0), 2, Qt::DashLine));
+	_lines[SUBTYPE(SLCONS, 13)] = Line(QPen(QColor(0, 0, 0), 2, Qt::DashLine));
+	_lines[SUBTYPE(SLCONS, 15)] = Line(QPen(QColor(0, 0, 0), 2));
+	_lines[TYPE(I_SLCONS)] = _lines[TYPE(SLCONS)];
+	_lines[SUBTYPE(I_SLCONS, 1)] = _lines[SUBTYPE(SLCONS, 1)];
+	_lines[SUBTYPE(I_SLCONS, 2)] = _lines[SUBTYPE(SLCONS, 2)];
+	_lines[SUBTYPE(I_SLCONS, 3)] = _lines[SUBTYPE(SLCONS, 3)];
+	_lines[SUBTYPE(I_SLCONS, 4)] = _lines[SUBTYPE(SLCONS, 4)];
+	_lines[SUBTYPE(I_SLCONS, 5)] = _lines[SUBTYPE(SLCONS, 5)];
+	_lines[SUBTYPE(I_SLCONS, 6)] = _lines[SUBTYPE(SLCONS, 6)];
+	_lines[SUBTYPE(I_SLCONS, 7)] = _lines[SUBTYPE(SLCONS, 7)];
+	_lines[SUBTYPE(I_SLCONS, 10)] = _lines[SUBTYPE(SLCONS, 10)];
+	_lines[SUBTYPE(I_SLCONS, 11)] = _lines[SUBTYPE(SLCONS, 11)];
+	_lines[SUBTYPE(I_SLCONS, 12)] = _lines[SUBTYPE(SLCONS, 12)];
+	_lines[SUBTYPE(I_SLCONS, 13)] = _lines[SUBTYPE(SLCONS, 13)];
+	_lines[SUBTYPE(I_SLCONS, 15)] = _lines[SUBTYPE(SLCONS, 15)];
+	_lines[SUBTYPE(I_SLCONS, 19)] = Line(QPen(QColor(0, 0, 0), 2));
 	_lines[TYPE(PONTON)] = Line(QPen(QColor(0x33, 0x33, 0x33), 1, Qt::SolidLine));
 	_lines[TYPE(DYKCON)] = Line(QPen(QColor(0x33, 0x33, 0x33), 2, Qt::SolidLine));
 	_lines[TYPE(RIVERS)] = Line(QPen(QColor(0, 0, 0), 1, Qt::SolidLine));
@@ -305,6 +411,7 @@ void Style::lineStyle(qreal ratio)
 	  Qt::SolidLine));
 	_lines[TYPE(I_WTWAXS)] = Line(QPen(QColor(0, 0, 0), 0, Qt::DashLine));
 	_lines[SUBTYPE(RECTRC, 1)] = Line(QPen(QColor(0, 0, 0), 0, Qt::SolidLine));
+	_lines[SUBTYPE(RECTRC, 1)].setTextFontSize(Small);
 	_lines[SUBTYPE(RECTRC, 2)] = Line(QPen(QColor(0, 0, 0), 0, Qt::DashLine));
 	_lines[SUBTYPE(RCRTCL, 1)] = Line(QPen(QColor(0xeb, 0x49, 0xeb), 0,
 	  Qt::SolidLine));
@@ -327,6 +434,8 @@ void Style::lineStyle(qreal ratio)
 	  Qt::DashLine));
 	_lines[SUBTYPE(RDOCAL, 4)] = Line(QPen(QColor(0xeb, 0x49, 0xeb), 1,
 	  Qt::DashLine));
+	_lines[TYPE(STSLNE)] = Line(
+	  QImage(":/marine/straight-territorial-sea-baseline.png"));
 }
 
 void Style::pointStyle(qreal ratio)
@@ -458,6 +567,7 @@ void Style::pointStyle(qreal ratio)
 	_points[TYPE(PILBOP)] = Point(QImage(":/marine/boarding-place.png"));
 	_points[TYPE(SISTAT)] = Point(QImage(":/marine/pylon.png"));
 	_points[TYPE(SLCONS)] = Point(QImage(":/marine/construction.png"), Small);
+	_points[TYPE(I_SLCONS)] = Point(QImage(":/marine/construction.png"), Small);
 	_points[TYPE(CURENT)] = Point(QImage(":/marine/current.png"));
 	_points[SUBTYPE(WEDKLP, 0)] = Point(QImage(":/marine/kelp.png"));
 	_points[SUBTYPE(WEDKLP, 1)] = Point(QImage(":/marine/kelp.png"));
@@ -540,6 +650,15 @@ void Style::pointStyle(qreal ratio)
 	_points[SUBTYPE(I_RESARE, 23)] = _points[SUBTYPE(RESARE, 23)];
 	_points[SUBTYPE(I_RESARE, 25)] = _points[SUBTYPE(RESARE, 25)];
 	_points[SUBTYPE(I_RESARE, 26)] = _points[SUBTYPE(RESARE, 26)];
+	_points[TYPE(DMPGRD)].setTextColor(QColor(0x5d, 0x5b, 0x59));
+	_points[TYPE(DMPGRD)].setHaloColor(QColor());
+	_points[SUBTYPE(DMPGRD, 1)] = _points[TYPE(DMPGRD)];
+	_points[SUBTYPE(DMPGRD, 2)] = _points[TYPE(DMPGRD)];
+	_points[SUBTYPE(DMPGRD, 3)] = _points[TYPE(DMPGRD)];
+	_points[SUBTYPE(DMPGRD, 4)].setTextColor(QColor(0xff, 0x40, 0x40));
+	_points[SUBTYPE(DMPGRD, 4)].setHaloColor(QColor());
+	_points[SUBTYPE(DMPGRD, 5)] = _points[TYPE(DMPGRD)];
+	_points[SUBTYPE(DMPGRD, 6)] = _points[TYPE(DMPGRD)];
 
 	_points[SUBTYPE(I_BUNSTA, 1)] = Point(svg2img(":/POI/fuel-11.svg", ratio),
 	  Small);
