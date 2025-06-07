@@ -120,7 +120,7 @@ bool RGNFile::readBuoyInfo(Handle &hdl, quint8 flags, quint32 size,
 	if (!(size >= 2 && readUInt16(hdl, val)))
 		return false;
 
-	point->flags = (val & 0x3f)<<24;
+	point->flags |= (val & 0x3f)<<24;
 
 	lc = (val >> 10) & 0x0f;
 	if (!lc)
@@ -563,6 +563,25 @@ bool RGNFile::readLclNavaid(Handle &hdl, quint32 size,
 	return (size == 0);
 }
 
+bool RGNFile::readLclImg(Handle &hdl, quint32 size,
+  MapData::Point *point) const
+{
+	quint32 img;
+
+	if (size == 1) {
+		if (!readUInt8(hdl, img))
+			return false;
+	} else if (size == 2) {
+		if (!readUInt16(hdl, img))
+			return false;
+	} else
+		return false;
+
+	point->flags |= img<<24;
+
+	return true;
+}
+
 bool RGNFile::readLclFields(Handle &hdl, const quint32 flags[3],
   SegmentType segmentType, void *object) const
 {
@@ -586,13 +605,15 @@ bool RGNFile::readLclFields(Handle &hdl, const quint32 flags[3],
 				} else
 					size = m + 1;
 
-				if (i == 2 && point) {
-					if (!readLclNavaid(hdl, size, point))
-						return false;
-				} else {
-					if (!seek(hdl, pos(hdl) + size))
-						return false;
-				}
+				quint32 off = pos(hdl);
+
+				if (i == 2 && point)
+					readLclNavaid(hdl, size, point);
+				else if (i == 3 && point)
+					readLclImg(hdl, size, point);
+
+				if (!seek(hdl, off + size))
+					return false;
 			}
 			bitfield >>= 1;
 			j++;

@@ -6,7 +6,7 @@
 class MapAction;
 class Projection;
 
-class MapItem : public QObject, public PlaneItem
+class MapItem : public PlaneItem
 {
 	Q_OBJECT
 
@@ -28,6 +28,12 @@ public:
 	void setDigitalZoom(int zoom);
 
 	ToolTip info(bool extended) const;
+
+	const QColor color() const {return _pen.color();}
+	const QString &name() const {return _name;}
+
+public slots:
+	void hover(bool hvr);
 
 signals:
 	void triggered();

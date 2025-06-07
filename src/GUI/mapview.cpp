@@ -31,6 +31,7 @@
 #define MARGIN           10
 #define SCALE_OFFSET     7
 #define COORDINATES_OFFSET SCALE_OFFSET
+#define LEGEND_OFFSET SCALE_OFFSET
 
 
 MapView::MapView(Map *map, POI *poi, QWidget *parent) : QGraphicsView(parent)
@@ -87,6 +88,11 @@ MapView::MapView(Map *map, POI *poi, QWidget *parent) : QGraphicsView(parent)
 	_motionInfo->setVisible(false);
 	_scene->addItem(_motionInfo);
 
+	_legend = new LegendItem();
+	_legend->setZValue(2.0);
+	_legend->setVisible(false);
+	_scene->addItem(_legend);
+
 	_mapOpacity = 1.0;
 	_backgroundColor = Qt::white;
 	_markerColor = Qt::red;
@@ -141,6 +147,24 @@ void MapView::centerOn(const QPointF &pos)
 	_cursorCoordinates->setCoordinates(Coordinates());
 }
 
+void MapView::updateLegend()
+{
+	_legend->clear();
+
+	if (_showTracks) {
+		for (int i = 0; i < _tracks.size(); i++)
+			_legend->addItem(_tracks.at(i));
+	}
+	if (_showRoutes) {
+		for (int i = 0; i < _routes.size(); i++)
+			_legend->addItem(_routes.at(i));
+	}
+	if (_showAreas) {
+		for (int i = 0; i < _areas.size(); i++)
+			_legend->addItem(_areas.at(i));
+	}
+}
+
 PathItem *MapView::addTrack(const Track &track)
 {
 	if (!track.isValid()) {
@@ -164,8 +188,10 @@ PathItem *MapView::addTrack(const Track &track)
 	ti->showTicks(_showPathTicks);
 	_scene->addItem(ti);
 
-	if (_showTracks)
+	if (_showTracks) {
 		addPOI(_poi->points(ti->path()));
+		_legend->addItem(ti);
+	}
 
 	return ti;
 }
@@ -196,8 +222,10 @@ PathItem *MapView::addRoute(const Route &route)
 	ri->showTicks(_showPathTicks);
 	_scene->addItem(ri);
 
-	if (_showRoutes)
+	if (_showRoutes) {
 		addPOI(_poi->points(ri->path()));
+		_legend->addItem(ri);
+	}
 
 	return ri;
 }
@@ -222,8 +250,10 @@ void MapView::addArea(const Area &area)
 	_ar |= ai->bounds();
 	_areas.append(ai);
 
-	if (_showAreas)
+	if (_showAreas) {
 		addPOI(_poi->points(ai->bounds()));
+		_legend->addItem(ai);
+	}
 }
 
 void MapView::addWaypoints(const QVector<Waypoint> &waypoints)
@@ -263,8 +293,10 @@ MapItem *MapView::addMap(MapAction *map)
 	_ar |= mi->bounds();
 	_areas.append(mi);
 
-	if (_showAreas)
+	if (_showAreas) {
 		addPOI(_poi->points(mi->bounds()));
+		_legend->addItem(mi);
+	}
 
 	return mi;
 }
@@ -397,6 +429,8 @@ void MapView::setPalette(const Palette &palette)
 		_routes.at(i)->setColor(_palette.nextColor());
 	for (int i = 0; i < _areas.count(); i++)
 		_areas.at(i)->setColor(_palette.nextColor());
+
+	updateLegend();
 }
 
 void MapView::setMap(Map *map)
@@ -577,6 +611,7 @@ void MapView::digitalZoom(int zoom)
 	_positionCoordinates->setDigitalZoom(_digitalZoom);
 	_motionInfo->setDigitalZoom(_digitalZoom);
 	_crosshair->setDigitalZoom(_digitalZoom);
+	_legend->setDigitalZoom(_digitalZoom);
 }
 
 void MapView::zoom(int zoom, const QPoint &pos, bool shift)
@@ -684,7 +719,7 @@ void MapView::plot(QPainter *painter, const QRectF &target, qreal scale,
 {
 	QRect orig;
 	qreal ratio, diff, q, p;
-	QPointF scenePos, scalePos, posPos, motionPos;
+	QPointF scenePos, scalePos, posPos, motionPos, legendPos;
 	bool hidpi = _hidpi && _deviceRatio > 1.0;
 	int zoom;
 
@@ -699,6 +734,7 @@ void MapView::plot(QPainter *painter, const QRectF &target, qreal scale,
 	scalePos = _mapScale->pos();
 	posPos = _positionCoordinates->pos();
 	motionPos = _motionInfo->pos();
+	legendPos = _legend->pos();
 
 	if (orig.height() * (target.width() / target.height()) - orig.width() < 0) {
 		ratio = target.height() / target.width();
@@ -756,6 +792,10 @@ void MapView::plot(QPainter *painter, const QRectF &target, qreal scale,
 	_motionInfo->setPos(mapToScene(adj.topRight().toPoint() + QPoint(
 	  (-COORDINATES_OFFSET - _motionInfo->boundingRect().width()) * p,
 	  (COORDINATES_OFFSET + _motionInfo->boundingRect().height()) * p)));
+	_legend->setDigitalZoom(_digitalZoom - log2(p));
+	_legend->setPos(mapToScene(adj.topRight().toPoint() + QPoint(
+	  (-LEGEND_OFFSET - _legend->boundingRect().width()) * p,
+	  LEGEND_OFFSET * p)));
 
 	// Print the view
 	render(painter, target, adj.toRect());
@@ -776,6 +816,8 @@ void MapView::plot(QPainter *painter, const QRectF &target, qreal scale,
 	_positionCoordinates->setPos(posPos);
 	_motionInfo->setDigitalZoom(_digitalZoom);
 	_motionInfo->setPos(motionPos);
+	_legend->setDigitalZoom(_digitalZoom);
+	_legend->setPos(legendPos);
 
 	// Exit plot mode
 	_plot = false;
@@ -795,12 +837,15 @@ void MapView::clear()
 	_scene->removeItem(_positionCoordinates);
 	_scene->removeItem(_crosshair);
 	_scene->removeItem(_motionInfo);
+	_scene->removeItem(_legend);
 	_scene->clear();
 	_scene->addItem(_mapScale);
 	_scene->addItem(_cursorCoordinates);
 	_scene->addItem(_positionCoordinates);
 	_scene->addItem(_crosshair);
 	_scene->addItem(_motionInfo);
+	_legend->clear();
+	_scene->addItem(_legend);
 
 	_palette.reset();
 
@@ -822,6 +867,7 @@ void MapView::showTracks(bool show)
 	for (int i = 0; i < _tracks.count(); i++)
 		_tracks.at(i)->setVisible(show);
 
+	updateLegend();
 	updatePOI();
 }
 
@@ -832,6 +878,7 @@ void MapView::showRoutes(bool show)
 	for (int i = 0; i < _routes.count(); i++)
 		_routes.at(i)->setVisible(show);
 
+	updateLegend();
 	updatePOI();
 }
 
@@ -978,6 +1025,12 @@ void MapView::showMotionInfo(bool show)
 	_scene->invalidate();
 }
 
+void MapView::showLegend(bool show)
+{
+	_legend->setVisible(show);
+	_scene->invalidate();
+}
+
 void MapView::showOverlappedPOIs(bool show)
 {
 	_overlapPOIs = show;
@@ -1087,6 +1140,7 @@ void MapView::setBackgroundColor(const QColor &color)
 	_cursorCoordinates->setBackgroundColor(color);
 	_positionCoordinates->setBackgroundColor(color);
 	_motionInfo->setBackgroundColor(color);
+	_legend->setBackgroundColor(color);
 
 	for (int i = 0; i < _tracks.size(); i++)
 		_tracks.at(i)->setMarkerBackgroundColor(color);
@@ -1153,6 +1207,10 @@ void MapView::paintEvent(QPaintEvent *event)
 			if (_motionInfo->pos() != coordinatesScenePos)
 				_motionInfo->setPos(coordinatesScenePos);
 		}
+
+		QPointF legendPos = mapToScene(rect().topRight() + QPoint(
+		  -(LEGEND_OFFSET + _legend->boundingRect().width()), LEGEND_OFFSET));
+		_legend->setPos(legendPos);
 	}
 
 	QGraphicsView::paintEvent(event);
@@ -1273,6 +1331,8 @@ void MapView::useStyles(bool use)
 		_areas.at(i)->updateStyle();
 	for (int i = 0; i < _waypoints.size(); i++)
 		_waypoints.at(i)->updateStyle();
+
+	updateLegend();
 }
 
 void MapView::setMarkerColor(const QColor &color)
@@ -1401,6 +1461,7 @@ void MapView::setInfoColor(const QColor &color)
 	_cursorCoordinates->setColor(color);
 	_positionCoordinates->setColor(color);
 	_motionInfo->setColor(color);
+	_legend->setColor(color);
 }
 
 void MapView::drawInfoBackground(bool draw)
@@ -1410,6 +1471,7 @@ void MapView::drawInfoBackground(bool draw)
 	_cursorCoordinates->drawBackground(draw);
 	_positionCoordinates->drawBackground(draw);
 	_motionInfo->drawBackground(draw);
+	_legend->drawBackground(draw);
 
 	for (int i = 0; i < _tracks.size(); i++)
 		_tracks.at(i)->drawMarkerBackground(draw);

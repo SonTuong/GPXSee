@@ -869,6 +869,9 @@ void Style::defaultPointStyle(qreal ratio)
 	_points[0x10217] = Point(QImage(":/marine/pylon.png"));
 	_points[0x10218] = Point(QImage(":/marine/pylon.png"));
 
+	_points[0x10300 | 29<<24] = Point(QImage(":/marine/flagstaff.png"));
+	_points[0x10300 | 30<<24] = Point(QImage(":/marine/monument.png"));
+	_points[0x10300 | 83<<24] = Point(QImage(":/marine/crane.png"));
 	_points[0x10304] = Point(QImage(":/marine/building.png"));
 	_points[0x10305] = Point(QImage(":/marine/chimney.png"), QPoint(0, -11));
 	_points[0x10306] = Point(QImage(":/marine/church.png"));
@@ -903,6 +906,8 @@ void Style::defaultPointStyle(qreal ratio)
 	_points[0x10500 | 13<<20] = Point(Small, QColor(0xfc, 0xc6, 0xfc));
 	_points[0x10500 | 14<<20] = Point(Small, QColor(0xe2, 0xdc, 0xa9));
 	_points[0x10500 | 15<<20] = Point(Small, QColor(0xcd, 0xcd, 0xcd));
+	_points[0x10500 | 5<<24] = Point(QImage(":/marine/eddies.png"));
+	_points[0x10500 | 6<<24] = Point(QImage(":/marine/overfalls.png"));
 
 	_points[0x10701] = Point(QImage(":/marine/anchorage.png"));
 	_points[0x10702] = Point(QImage(":/marine/boarding-place.png"));
