@@ -5,6 +5,13 @@ unix:!macx:!android {
 }
 VERSION = 15.1
 
+QMAKE_CXXFLAGS_RELEASE -= -O1
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE *= -O0 -g
+QMAKE_CFLAGS_RELEASE -= -O1
+QMAKE_CFLAGS_RELEASE -= -O2
+QMAKE_CFLAGS_RELEASE *= -O0 -g
+
 QT += core \
     gui \
     gui-private \
