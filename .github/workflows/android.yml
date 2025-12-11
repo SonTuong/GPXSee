@@ -1,9 +1,6 @@
 name: Android
 
-on:
-  push:
-    branches:
-      - android-latest
+on: workflow_dispatch
 
 jobs:
   build:
