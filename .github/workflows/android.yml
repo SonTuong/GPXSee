@@ -3,12 +3,12 @@ name: Android
 on:
   push:
     branches:
-      - master
+      - android-latest
 
 jobs:
   build:
     name: GPXSee
-    runs-on: ubuntu-22.04
+    runs-on: myarch
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,4 +49,3 @@ jobs:
         with:
           name: GPXSee-arm64_v8a.apk
           path: android-build/build/outputs/apk/debug/android-build-debug.apk
-          compression-level: 0
