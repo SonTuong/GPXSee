@@ -266,14 +266,13 @@ void GraphItem::updatePath()
 			  * _sy);
 
 			_path.moveTo(p1);
+			_path.addEllipse(p1, 3, 3);
 			for (int i = 1; i < segment.size(); i++) {
 				QPointF p2(segment.at(i).x(_type) * _sx, -segment.at(i).y()
 				  * _sy);
-				QPointF diff(p1 - p2);
-				if (qAbs(diff.x()) >= 1.0 || qAbs(diff.y()) >= 1.0) {
-					_path.lineTo(p2);
-					p1 = p2;
-				}
+				_path.lineTo(p2);
+				p1 = p2;
+				_path.addEllipse(p1, 3, 3);
 			}
 		}
 	}

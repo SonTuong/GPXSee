@@ -381,7 +381,7 @@ Graph Track::reportedSpeed() const
 			} else if (sd.at(j).hasSpeed() && !seg.outliers.contains(j))
 				v = sd.at(j).speed();
 			else
-				continue;
+				v = 0;
 
 			gs.append(GraphPoint(seg.distance.at(j), seg.time.at(j), v));
 		}

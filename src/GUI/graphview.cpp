@@ -86,6 +86,8 @@ GraphView::GraphView(QWidget *parent)
 	_xLabel = tr("Distance");
 
 	_zoom = 1.0;
+    _zoomStart = 1.0;
+    _zoomNow = 1.0;
 
 	_angleDelta = 0;
 	_dragStart = 0;
@@ -404,22 +406,34 @@ void GraphView::wheelEvent(QWheelEvent *e)
 void GraphView::pinchGesture(QPinchGesture *gesture)
 {
 	QPinchGesture::ChangeFlags changeFlags = gesture->changeFlags();
-
 	if (changeFlags & QPinchGesture::ScaleFactorChanged) {
-		QPointF pos = mapToScene(gesture->centerPoint().toPoint());
-		QRectF gr(_grid->boundingRect());
-		QPointF r(pos.x() / gr.width(), pos.y() / gr.height());
+    	_zoomNow = qMax(_zoomNow * gesture->scaleFactor(), 1.0);
+    	qreal zoomChange = _zoomNow > _zoomStart ? _zoomNow / _zoomStart : _zoomStart / _zoomNow;
+	    if (zoomChange > 1.5)
+	    {
+	        QPointF pos = mapToScene(gesture->centerPoint().toPoint());
+		    QRectF gr(_grid->boundingRect());
+		    QPointF r(pos.x() / gr.width(), pos.y() / gr.height());
+		    
+		    _zoom = _zoomNow > _zoomStart ? _zoom * 1.25 : _zoom * 0.75;
+		    _zoom = qMax(_zoom, 1.0);
+	        _zoomStart = _zoomNow;
+		    redraw();
 
-		_zoom = qMax(_zoom * gesture->scaleFactor(), 1.0);
-		redraw();
-
-		QRectF ngr(_grid->boundingRect());
-		QPointF npos(mapFromScene(QPointF(r.x() * ngr.width(),
-		  r.y() * ngr.height())));
-		QScrollBar *sb = horizontalScrollBar();
-		sb->setSliderPosition(sb->sliderPosition() + npos.x()
-		  - gesture->centerPoint().x());
+		    QRectF ngr(_grid->boundingRect());
+		    QPointF npos(mapFromScene(QPointF(r.x() * ngr.width(),
+		      r.y() * ngr.height())));
+		    QScrollBar *sb = horizontalScrollBar();
+		    sb->setSliderPosition(sb->sliderPosition() + npos.x()
+		      - gesture->centerPoint().x());
+		}
 	}
+	if (changeFlags & QPinchGesture::CenterPointChanged)
+	{
+		QScrollBar *sb = horizontalScrollBar();
+		sb->setSliderPosition(sb->sliderPosition() - (gesture->centerPoint().toPoint().x() - gesture->lastCenterPoint().toPoint().x()));
+	}
+
 }
 
 void GraphView::paintEvent(QPaintEvent *e)

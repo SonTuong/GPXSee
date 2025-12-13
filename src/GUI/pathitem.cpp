@@ -110,7 +110,7 @@ void PathItem::updatePainterPath()
 		const PathPoint *p1 = &segment.first();
 
 		_painterPath.moveTo(_map->ll2xy(p1->coordinates()));
-
+        _painterPath.addEllipse(_map->ll2xy(p1->coordinates()), 3, 3);
 		for (int j = 1; j < segment.size(); j++) {
 			const PathPoint *p2 = &segment.at(j);
 			double dist = p2->distance() - p1->distance();
@@ -130,6 +130,7 @@ void PathItem::updatePainterPath()
 				if (addSegment(p1->coordinates(), p2->coordinates()))
 					p1 = p2;
 			}
+			_painterPath.addEllipse(_map->ll2xy(p1->coordinates()), 3, 3);
 		}
 	}
 }

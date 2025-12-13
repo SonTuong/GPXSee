@@ -123,6 +123,8 @@ private:
 	qreal _minYRange;
 
 	qreal _zoom;
+    qreal _zoomStart;
+    qreal _zoomNow;
 
 	int _angleDelta;
 	int _dragStart;
